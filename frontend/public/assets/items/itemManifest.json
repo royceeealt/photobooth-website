@@ -1,0 +1,14 @@
+{
+  "hair": [
+    { "id": "hair_01", "category": "hair", "name": "Short Spike", "assetPath": "/assets/items/hair/hair_01.png" },
+    { "id": "hair_02", "category": "hair", "name": "Long Wave", "assetPath": "/assets/items/hair/hair_02.png" }
+  ],
+  "skinTone": [
+    { "id": "skin_01", "category": "skinTone", "name": "Tone 1", "assetPath": "/assets/items/skinTone/skin_01.png" },
+    { "id": "skin_02", "category": "skinTone", "name": "Tone 2", "assetPath": "/assets/items/skinTone/skin_02.png" }
+  ],
+  "accessory": [
+    { "id": "acc_01", "category": "accessory", "name": "Glasses", "assetPath": "/assets/items/accessory/acc_01.png" },
+    { "id": "acc_02", "category": "accessory", "name": "Hat", "assetPath": "/assets/items/accessory/acc_02.png" }
+  ]
+}
