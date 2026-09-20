@@ -1,36 +1,89 @@
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useSessionStore from "../store/useSessionStore.js";
 
-const OPTIONS = [3, 4, 6];
-
-// Client-state only — picks how many shots go on the final strip.
 export default function StripCount() {
   const navigate = useNavigate();
-  const stripCount = useSessionStore((s) => s.stripCount);
-  const setStripCount = useSessionStore((s) => s.setStripCount);
 
-  function handleContinue() {
-    if (!stripCount) return;
-    navigate("/avatar-design");
+  const [avatarCount, setAvatarCount] = useState("");
+  const [layoutSize, setLayoutSize] = useState("");
+
+  function handleContinue(event) {
+    event.preventDefault();
+
+    if (!avatarCount || !layoutSize) {
+      return;
+    }
+
+    /*
+     * Temporary:
+     * We are passing these values to the next page through
+     * React Router navigation state.
+     *
+     * Once we connect useSessionStore, these will be stored there instead.
+     */
+    navigate("/avatar-design", {
+      state: {
+        avatarCount: Number(avatarCount),
+        stripCount: Number(layoutSize),
+      },
+    });
   }
 
   return (
-    <div className="strip-count-page">
-      <h1>How many photos?</h1>
-      <div className="strip-count-options">
-        {OPTIONS.map((count) => (
-          <button
-            key={count}
-            className={stripCount === count ? "selected" : ""}
-            onClick={() => setStripCount(count)}
+    <main className="page">
+      <section className="setup-page">
+
+        {/* Question 1 */}
+        <div className="setup-field">
+          <label htmlFor="avatar-count">
+            How many avatars are you creating?
+          </label>
+
+          <select
+            id="avatar-count"
+            value={avatarCount}
+            onChange={(event) => setAvatarCount(event.target.value)}
           >
-            {count}
-          </button>
-        ))}
-      </div>
-      <button onClick={handleContinue} disabled={!stripCount}>
-        Continue
-      </button>
-    </div>
+            <option value="">Select</option>
+            <option value="1">1 avatar</option>
+            <option value="2">2 avatars</option>
+            <option value="3">3 avatars</option>
+            <option value="4">4 avatars</option>
+          </select>
+        </div>
+
+
+        {/* Question 2 */}
+        <div className="setup-field">
+          <label htmlFor="layout-size">
+            What is the size of the layout?
+          </label>
+
+          <select
+            id="layout-size"
+            value={layoutSize}
+            onChange={(event) => setLayoutSize(event.target.value)}
+          >
+            <option value="">Select</option>
+            <option value="1">1 photo</option>
+            <option value="2">2 photos</option>
+            <option value="3">3 photos</option>
+            <option value="4">4 photos</option>
+          </select>
+        </div>
+
+
+        {/* Continue */}
+        <button
+          className="setup-confirm"
+          type="button"
+          onClick={handleContinue}
+          disabled={!avatarCount || !layoutSize}
+        >
+          Confirm →
+        </button>
+
+      </section>
+    </main>
   );
 }

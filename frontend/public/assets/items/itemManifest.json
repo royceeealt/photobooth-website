@@ -1,14 +1,150 @@
 {
   "hair": [
-    { "id": "hair_01", "category": "hair", "name": "Short Spike", "assetPath": "/assets/items/hair/hair_01.png" },
-    { "id": "hair_02", "category": "hair", "name": "Long Wave", "assetPath": "/assets/items/hair/hair_02.png" }
+    {
+      "id": "hair_01",
+      "category": "hair",
+      "name": "Short Spike",
+      "assetPath": "/assets/items/hair/hair_01.png"
+    },
+    {
+      "id": "hair_02",
+      "category": "hair",
+      "name": "Long Wave",
+      "assetPath": "/assets/items/hair/hair_02.png"
+    },
+    {
+      "id": "hair_03",
+      "category": "hair",
+      "name": "Curly",
+      "assetPath": "/assets/items/hair/hair_03.png"
+    },
+    {
+      "id": "hair_04",
+      "category": "hair",
+      "name": "Bun",
+      "assetPath": "/assets/items/hair/hair_04.png"
+    },
+    {
+      "id": "hair_05",
+      "category": "hair",
+      "name": "Ponytail",
+      "assetPath": "/assets/items/hair/hair_05.png"
+    }
+
   ],
+
   "skinTone": [
-    { "id": "skin_01", "category": "skinTone", "name": "Tone 1", "assetPath": "/assets/items/skinTone/skin_01.png" },
-    { "id": "skin_02", "category": "skinTone", "name": "Tone 2", "assetPath": "/assets/items/skinTone/skin_02.png" }
+    {
+      "id": "skin_01",
+      "category": "skinTone",
+      "name": "Tone 1",
+      "assetPath": ""
+    },
+    {
+      "id": "skin_02",
+      "category": "skinTone",
+      "name": "Tone 2",
+      "assetPath": ""
+    }
   ],
+
+  "body": [
+    {
+      "id": "body_01",
+      "category": "body",
+      "name": "Base Body",
+      "assetPath": "/assets/items/body/body.png"
+    }
+  ],
+
   "accessory": [
-    { "id": "acc_01", "category": "accessory", "name": "Glasses", "assetPath": "/assets/items/accessory/acc_01.png" },
-    { "id": "acc_02", "category": "accessory", "name": "Hat", "assetPath": "/assets/items/accessory/acc_02.png" }
+    {
+      "id": "acc_01",
+      "category": "accessory",
+      "name": "Glasses",
+      "assetPath": ""
+    },
+    {
+      "id": "acc_02",
+      "category": "accessory",
+      "name": "Hat",
+      "assetPath": ""
+    }
+  ],
+
+  "eyes": [
+    {
+      "id": "eyes_01",
+      "category": "eyes",
+      "name": "Eyes",
+      "assetPath": "/assets/items/eyes/eyes.png"
+    }
+  ],
+
+  "lips": [
+    {
+      "id": "lips_01",
+      "category": "lips",
+      "name": "Lips",
+      "assetPath": "/assets/items/lips/lips.png"
+    }
+  ],
+
+  "top": [
+    {
+      "id": "top_01",
+      "category": "top",
+      "name": "Top",
+      "assetPath": "/assets/items/tops/top_01.png"
+    },
+    {
+      "id": "top_02",
+      "category": "top",
+      "name": "Shirt",
+      "assetPath": "/assets/items/tops/top_02.png"
+    },
+    {
+      "id": "top_03",
+      "category": "top",
+      "name": "Jacket",
+      "assetPath": "/assets/items/tops/top_03.png"
+    }
+
+  ],
+
+  "bottom": [
+    {
+      "id": "bottom_01",
+      "category": "bottom",
+      "name": "Pants",
+      "assetPath": "/assets/items/pants/pant_01.png"
+    },
+    {
+      "id": "bottom_02",
+      "category": "bottom",
+      "name": "Skirt",
+      "assetPath": "/assets/items/pants/pant_02.png"
+    },
+    {
+      "id": "bottom_03",
+      "category": "bottom",
+      "name": "Shorts",
+      "assetPath": "/assets/items/pants/pant_03.png"
+    }
+  ],
+
+  "footwear": [
+    {
+      "id": "shoes_01",
+      "category": "footwear",
+      "name": "Shoes",
+      "assetPath": "/assets/items/footwear/footwear01.png"
+    },
+    {
+      "id": "shoes_02",
+      "category": "footwear",
+      "name": "Boots",
+      "assetPath": "/assets/items/footwear/footwear02.png"
+    }
   ]
 }

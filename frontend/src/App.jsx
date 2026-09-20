@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
@@ -17,22 +18,10 @@ export default function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
-      <Route
-        path="/strip-count"
-        element={
-          <ProtectedRoute>
-            <StripCount />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/avatar-design"
-        element={
-          <ProtectedRoute>
-            <AvatarDesign />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/strip-count" element={<StripCount />} />
+
+      <Route path="/avatar-design" element={<AvatarDesign />} />
+      
       <Route
         path="/capture"
         element={
