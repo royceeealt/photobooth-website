@@ -201,352 +201,478 @@ export default function AvatarDesign() {
 
         <div className="avatar-controls">
 
-          {/* Full / Half view */}
+          <div className="avatar-customization-controls">
 
-          <div className="view-toggle">
+            {/* Full / Half view */}
+
+            <div className="view-toggle">
+
+              <button
+                className={avatarView === "full" ? "active" : ""}
+                onClick={() => setAvatarView("full")}
+              >
+                Full View
+              </button>
+
+              <button
+                className={avatarView === "half" ? "active" : ""}
+                onClick={() => setAvatarView("half")}
+              >
+                Half View
+              </button>
+
+            </div>
+
+
+            {/* Category navigation */}
+
+            <div className="category-control">
+
+              <button
+                className="category-arrow"
+                onClick={previousCategory}
+              >
+                ←
+              </button>
+
+              <span className="category-name">
+                {currentCategory.label}
+              </span>
+
+              <button
+                className="category-arrow"
+                onClick={nextCategory}
+              >
+                →
+              </button>
+
+            </div>
+
+
+            {/* Actual item picker */}
+
+            {currentCategory.id !== "skinTone" && (
+              <ItemPicker
+                category={currentCategory.id}
+                selected={avatarConfig}
+                onSelect={handleItemSelect}
+                avatarView={avatarView}
+              />
+            )}
+
+            {currentCategory.id === "eyes" && (
+              <div className="sprite-colour-picker">
+
+                <div className="sprite-colour-label">
+                  Eye Colour
+                </div>
+
+                <button
+                  type="button"
+                  className="colour-swatch"
+                  style={{ background: "#222222" }}
+                  onClick={() =>
+                    setAvatarColor("eyesColor", "#222222")
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="colour-swatch"
+                  style={{ background: "#4A2F24" }}
+                  onClick={() =>
+                    setAvatarColor("eyesColor", "#4A2F24")
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="colour-swatch"
+                  style={{ background: "#3B6E8C" }}
+                  onClick={() =>
+                    setAvatarColor("eyesColor", "#3B6E8C")
+                  }
+                />
+
+                <button
+                  type="button"
+                  className="colour-swatch"
+                  style={{ background: "#4F7A3A" }}
+                  onClick={() =>
+                    setAvatarColor("eyesColor", "#4F7A3A")
+                  }
+                />
+
+                <div className="custom-colour">
+                  <span>Custom</span>
+
+                  <input
+                    type="color"
+                    value={
+                      avatarConfig.eyesColor || "#222222"
+                    }
+                    onChange={(e) =>
+                      setAvatarColor(
+                        "eyesColor",
+                        e.target.value
+                      )
+                    }
+                  />
+                </div>
+
+              </div>
+            )}
+
+            {currentCategory.id === "hair" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Hair Colour
+                </span>
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#222222" }}
+                  onClick={() =>
+                    setAvatarColor("hairColor", "#222222")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#5B321F" }}
+                  onClick={() =>
+                    setAvatarColor("hairColor", "#5B321F")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#8B5A2B" }}
+                  onClick={() =>
+                    setAvatarColor("hairColor", "#8B5A2B")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#D4A72C" }}
+                  onClick={() =>
+                    setAvatarColor("hairColor", "#D4A72C")
+                  }
+                />
+
+                <label className="custom-colour">
+                  Custom
+
+                  <input
+                    type="color"
+                    value={
+                      avatarConfig.hairColor || "#222222"
+                    }
+                    onChange={(event) =>
+                      setAvatarColor(
+                        "hairColor",
+                        event.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            )}
+
+            {currentCategory.id === "top" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Top Colour
+                </span>
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#B0B0B0" }}
+                  onClick={() =>
+                    setAvatarColor("topColor", "#B0B0B0")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#6B7280" }}
+                  onClick={() =>
+                    setAvatarColor("topColor", "#6B7280")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#4F46E5" }}
+                  onClick={() =>
+                    setAvatarColor("topColor", "#4F46E5")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#D97706" }}
+                  onClick={() =>
+                    setAvatarColor("topColor", "#D97706")
+                  }
+                />
+
+                <label className="custom-colour">
+                  Custom
+                  <input
+                    type="color"
+                    value={avatarConfig.topColor || "#B0B0B0"}
+                    onChange={(event) =>
+                      setAvatarColor(
+                        "topColor",
+                        event.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            )}
+
+            {currentCategory.id === "bottom" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Pants Colour
+                </span>
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#B0B0B0" }}
+                  onClick={() =>
+                    setAvatarColor("bottomColor", "#B0B0B0")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#4B5563" }}
+                  onClick={() =>
+                    setAvatarColor("bottomColor", "#4B5563")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#2563EB" }}
+                  onClick={() =>
+                    setAvatarColor("bottomColor", "#2563EB")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#7C3AED" }}
+                  onClick={() =>
+                    setAvatarColor("bottomColor", "#7C3AED")
+                  }
+                />
+
+                <label className="custom-colour">
+                  Custom
+                  <input
+                    type="color"
+                    value={avatarConfig.bottomColor || "#B0B0B0"}
+                    onChange={(event) =>
+                      setAvatarColor(
+                        "bottomColor",
+                        event.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            )}
+
+            {currentCategory.id === "footwear" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Shoes Colour
+                </span>
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#222222" }}
+                  onClick={() =>
+                    setAvatarColor("footwearColor", "#222222")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#6B7280" }}
+                  onClick={() =>
+                    setAvatarColor("footwearColor", "#6B7280")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#2563EB" }}
+                  onClick={() =>
+                    setAvatarColor("footwearColor", "#2563EB")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#DC2626" }}
+                  onClick={() =>
+                    setAvatarColor("footwearColor", "#DC2626")
+                  }
+                />
+
+                <label className="custom-colour">
+                  Custom
+
+                  <input
+                    type="color"
+                    value={
+                      avatarConfig.footwearColor || "#222222"
+                    }
+                    onChange={(event) =>
+                      setAvatarColor(
+                        "footwearColor",
+                        event.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            )}
+
+            {currentCategory.id === "skinTone" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Skin Colour
+                </span>
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#F1C6A5" }}
+                  onClick={() =>
+                    setAvatarColor("skinColor", "#F1C6A5")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#D99A78" }}
+                  onClick={() =>
+                    setAvatarColor("skinColor", "#D99A78")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#B97856" }}
+                  onClick={() =>
+                    setAvatarColor("skinColor", "#B97856")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#8D5A3B" }}
+                  onClick={() =>
+                    setAvatarColor("skinColor", "#8D5A3B")
+                  }
+                />
+
+                <label className="custom-colour">
+                  Custom
+
+                  <input
+                    type="color"
+                    value={
+                      avatarConfig.skinColor || "#B97856"
+                    }
+                    onChange={(event) =>
+                      setAvatarColor(
+                        "skinColor",
+                        event.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            )}
+
+            {currentCategory.id === "accessory" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Accessory Colour
+                </span>
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#222222" }}
+                  onClick={() =>
+                    setAvatarColor("accessoryColor", "#222222")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#7B3F22" }}
+                  onClick={() =>
+                    setAvatarColor("accessoryColor", "#7B3F22")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#2563EB" }}
+                  onClick={() =>
+                    setAvatarColor("accessoryColor", "#2563EB")
+                  }
+                />
+
+                <button
+                  className="colour-swatch"
+                  style={{ backgroundColor: "#DC2626" }}
+                  onClick={() =>
+                    setAvatarColor("accessoryColor", "#DC2626")
+                  }
+                />
+
+                <label className="custom-colour">
+                  Custom
+
+                  <input
+                    type="color"
+                    value={
+                      avatarConfig.accessoryColor || "#222222"
+                    }
+                    onChange={(event) =>
+                      setAvatarColor(
+                        "accessoryColor",
+                        event.target.value
+                      )
+                    }
+                  />
+                </label>
+              </div>
+            )}
+
+
+            {/* Drawing */}
 
             <button
-              className={avatarView === "full" ? "active" : ""}
-              onClick={() => setAvatarView("full")}
+              className="drawing-tools"
+              type="button"
+              onClick={() =>
+                setShowDrawingTools((current) => !current)
+              }
             >
-              Full View
+              {showDrawingTools ? "Hide Drawing Tools" : "Drawing Tools"}
             </button>
 
-            <button
-              className={avatarView === "half" ? "active" : ""}
-              onClick={() => setAvatarView("half")}
-            >
-              Half View
-            </button>
-
-          </div>
-
-
-          {/* Category navigation */}
-
-          <div className="category-control">
-
-            <button
-              className="category-arrow"
-              onClick={previousCategory}
-            >
-              ←
-            </button>
-
-            <span className="category-name">
-              {currentCategory.label}
-            </span>
-
-            <button
-              className="category-arrow"
-              onClick={nextCategory}
-            >
-              →
-            </button>
-
-          </div>
-
-
-          {/* Actual item picker */}
-
-          <ItemPicker
-            category={currentCategory.id}
-            selected={avatarConfig}
-            onSelect={handleItemSelect}
-          />
-
-          {currentCategory.id === "hair" && (
-            <div className="sprite-colour-picker">
-              <span className="sprite-colour-label">
-                Hair Colour
-              </span>
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#222222" }}
-                onClick={() =>
-                  setAvatarColor("hairColor", "#222222")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#5B321F" }}
-                onClick={() =>
-                  setAvatarColor("hairColor", "#5B321F")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#8B5A2B" }}
-                onClick={() =>
-                  setAvatarColor("hairColor", "#8B5A2B")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#D4A72C" }}
-                onClick={() =>
-                  setAvatarColor("hairColor", "#D4A72C")
-                }
-              />
-
-              <label className="custom-colour">
-                Custom
-
-                <input
-                  type="color"
-                  value={
-                    avatarConfig.hairColor || "#222222"
-                  }
-                  onChange={(event) =>
-                    setAvatarColor(
-                      "hairColor",
-                      event.target.value
-                    )
-                  }
-                />
-              </label>
-            </div>
-          )}
-
-          {currentCategory.id === "top" && (
-            <div className="sprite-colour-picker">
-              <span className="sprite-colour-label">
-                Top Colour
-              </span>
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#B0B0B0" }}
-                onClick={() =>
-                  setAvatarColor("topColor", "#B0B0B0")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#6B7280" }}
-                onClick={() =>
-                  setAvatarColor("topColor", "#6B7280")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#4F46E5" }}
-                onClick={() =>
-                  setAvatarColor("topColor", "#4F46E5")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#D97706" }}
-                onClick={() =>
-                  setAvatarColor("topColor", "#D97706")
-                }
-              />
-
-              <label className="custom-colour">
-                Custom
-                <input
-                  type="color"
-                  value={avatarConfig.topColor || "#B0B0B0"}
-                  onChange={(event) =>
-                    setAvatarColor(
-                      "topColor",
-                      event.target.value
-                    )
-                  }
-                />
-              </label>
-            </div>
-          )}
-
-          {currentCategory.id === "bottom" && (
-            <div className="sprite-colour-picker">
-              <span className="sprite-colour-label">
-                Pants Colour
-              </span>
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#B0B0B0" }}
-                onClick={() =>
-                  setAvatarColor("bottomColor", "#B0B0B0")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#4B5563" }}
-                onClick={() =>
-                  setAvatarColor("bottomColor", "#4B5563")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#2563EB" }}
-                onClick={() =>
-                  setAvatarColor("bottomColor", "#2563EB")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#7C3AED" }}
-                onClick={() =>
-                  setAvatarColor("bottomColor", "#7C3AED")
-                }
-              />
-
-              <label className="custom-colour">
-                Custom
-                <input
-                  type="color"
-                  value={avatarConfig.bottomColor || "#B0B0B0"}
-                  onChange={(event) =>
-                    setAvatarColor(
-                      "bottomColor",
-                      event.target.value
-                    )
-                  }
-                />
-              </label>
-            </div>
-          )}
-
-          {currentCategory.id === "footwear" && (
-            <div className="sprite-colour-picker">
-              <span className="sprite-colour-label">
-                Shoes Colour
-              </span>
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#222222" }}
-                onClick={() =>
-                  setAvatarColor("footwearColor", "#222222")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#6B7280" }}
-                onClick={() =>
-                  setAvatarColor("footwearColor", "#6B7280")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#2563EB" }}
-                onClick={() =>
-                  setAvatarColor("footwearColor", "#2563EB")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#DC2626" }}
-                onClick={() =>
-                  setAvatarColor("footwearColor", "#DC2626")
-                }
-              />
-
-              <label className="custom-colour">
-                Custom
-
-                <input
-                  type="color"
-                  value={
-                    avatarConfig.footwearColor || "#222222"
-                  }
-                  onChange={(event) =>
-                    setAvatarColor(
-                      "footwearColor",
-                      event.target.value
-                    )
-                  }
-                />
-              </label>
-            </div>
-          )}
-
-          {currentCategory.id === "skinTone" && (
-            <div className="sprite-colour-picker">
-              <span className="sprite-colour-label">
-                Skin Colour
-              </span>
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#F1C6A5" }}
-                onClick={() =>
-                  setAvatarColor("skinColor", "#F1C6A5")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#D99A78" }}
-                onClick={() =>
-                  setAvatarColor("skinColor", "#D99A78")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#B97856" }}
-                onClick={() =>
-                  setAvatarColor("skinColor", "#B97856")
-                }
-              />
-
-              <button
-                className="colour-swatch"
-                style={{ backgroundColor: "#8D5A3B" }}
-                onClick={() =>
-                  setAvatarColor("skinColor", "#8D5A3B")
-                }
-              />
-
-              <label className="custom-colour">
-                Custom
-
-                <input
-                  type="color"
-                  value={
-                    avatarConfig.skinColor || "#B97856"
-                  }
-                  onChange={(event) =>
-                    setAvatarColor(
-                      "skinColor",
-                      event.target.value
-                    )
-                  }
-                />
-              </label>
-            </div>
-          )}
-
-
-          {/* Drawing */}
-
-          <button
-            className="drawing-tools"
-            type="button"
-            onClick={() =>
-              setShowDrawingTools((current) => !current)
-            }
-          >
-            {showDrawingTools ? "Hide Drawing Tools" : "Drawing Tools"}
-          </button>
-          
+          </div>  
 
         </div>
 

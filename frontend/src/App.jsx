@@ -8,6 +8,8 @@ import AvatarDesign from "./pages/AvatarDesign.jsx";
 import ImageCapture from "./pages/ImageCapture.jsx";
 import Export from "./pages/Export.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import PhotoChoice from "./pages/PhotoChoice.jsx";
+import PhotoEditor from "./pages/PhotoEditor.jsx";
 
 // TODO: flesh out route guards — strip-count/avatar-design/capture/export
 // probably need a completed prior step (e.g. can't hit /capture without a stripCount set).
@@ -21,6 +23,16 @@ export default function App() {
       <Route path="/strip-count" element={<StripCount />} />
 
       <Route path="/avatar-design" element={<AvatarDesign />} />
+
+      <Route
+        path="/photo-choice"
+        element={<PhotoChoice />}
+      />
+
+      <Route
+        path="/photo-editor"
+        element={<PhotoEditor />}
+      />
       
       <Route
         path="/capture"

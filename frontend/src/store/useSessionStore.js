@@ -22,6 +22,8 @@ const defaultAvatarConfig = {
   bottomColor: "#B0B0B0",
   lipsColor: "#B05A78",
   footwearColor: "#222222",
+  accessoryColor: "#222222",
+  eyesColor: "#222222",
 };
 
 const useSessionStore = create((set) => ({

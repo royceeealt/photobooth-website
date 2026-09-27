@@ -29,7 +29,22 @@ export default function CharacterPreview({
   const lipsColor =
     avatarConfig.lipsColor || "#B05A78";
 
+  const accessoryColor =
+    avatarConfig.accessoryColor || "#222222";
+
   const isFullBody = avatarView === "full";
+
+  const isHalfView = avatarView === "half";
+
+  const getAssetPath = (items, id) => {
+    const item = items?.find((item) => item.id === id);
+
+    if (!item) return undefined;
+
+    return isHalfView
+      ? item.halfAssetPath || item.assetPath
+      : item.assetPath;
+  };
 
   return (
     <div
@@ -44,13 +59,15 @@ export default function CharacterPreview({
             This will eventually be replaced by the real
             skin/body sprite from your teammate. */}
 
+        {/* Body sprite */}
         {avatarConfig.body && catalog && (
           <PixelSprite
-            src={
-              catalog.body?.find(
-                (item) => item.id === avatarConfig.body
-              )?.assetPath
-            }
+            src={getAssetPath(
+              catalog.body,
+              avatarView === "half"
+                ? "body_half"
+                : avatarConfig.body
+            )}
             color={skinColor}
             region="skin"
           />
@@ -58,43 +75,33 @@ export default function CharacterPreview({
 
         {/* Real eye sprite */}
         {avatarConfig.eyes && catalog && (
-          <img
-            className="character-sprite"
+          <PixelSprite
             src={
-              catalog.eyes?.find(
-                (item) => item.id === avatarConfig.eyes
-              )?.assetPath
+              avatarView === "half"
+                ? catalog.eyes?.find(
+                    (item) => item.id === avatarConfig.eyes
+                  )?.halfAssetPath
+                : catalog.eyes?.find(
+                    (item) => item.id === avatarConfig.eyes
+                  )?.assetPath
             }
-            alt=""
+            color={avatarConfig.eyesColor || "#222222"}
           />
         )}
 
         {/* Real lips sprite */}
         {avatarConfig.lips && catalog && (
           <PixelSprite
-            src={
-              catalog.lips?.find(
-                (item) => item.id === avatarConfig.lips
-              )?.assetPath
-            }
+            src={getAssetPath(
+              catalog.lips,
+              avatarConfig.lips
+            )}
             color={lipsColor}
           />
         )}
 
-        {/* Real top sprite */}
-        {avatarConfig.top && catalog && (
-          <PixelSprite
-            src={
-              catalog.top?.find(
-                (item) => item.id === avatarConfig.top
-              )?.assetPath
-            }
-            color={topColor}
-          />
-        )}
-
         {/* Real bottom sprite */}
-        {avatarConfig.bottom && catalog && (
+        {avatarConfig.bottom && catalog && avatarView === "full" && (
           <PixelSprite
             src={
               catalog.bottom?.find(
@@ -105,8 +112,20 @@ export default function CharacterPreview({
           />
         )}
 
+        {/* Real top sprite */}
+        {avatarConfig.top && catalog && avatarView === "full" && (
+          <PixelSprite
+            src={
+              catalog.top?.find(
+                (item) => item.id === avatarConfig.top
+              )?.assetPath
+            }
+            color={topColor}
+          />
+        )}
+
         {/* Real footwear sprite */}
-        {avatarConfig.footwear && catalog && (
+        {avatarConfig.footwear && catalog && avatarView === "full" && (
           <PixelSprite
             src={
               catalog.footwear?.find(
@@ -120,12 +139,24 @@ export default function CharacterPreview({
         {/* Real hair sprite */}
         {avatarConfig.hair && catalog && (
           <PixelSprite
+            src={getAssetPath(
+              catalog.hair,
+              avatarConfig.hair
+            )}
+            color={hairColor}
+          />
+        )}
+
+        {/* Real accessory sprite */}
+        {/* Accessories */}
+        {avatarConfig.accessory && catalog && (
+          <PixelSprite
             src={
-              catalog.hair?.find(
-                (item) => item.id === avatarConfig.hair
+              catalog.accessory?.find(
+                (item) => item.id === avatarConfig.accessory
               )?.assetPath
             }
-            color={hairColor}
+            color={accessoryColor}
           />
         )}
       </div>
