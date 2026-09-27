@@ -1,4 +1,5 @@
 // Bottom action bar shown after a shot is taken: retake it or keep it and move on.
+import React from "react";
 export default function RetakeConfirmBar({ onRetake, onConfirm, disabled = false }) {
   return (
     <div className="retake-confirm-bar">

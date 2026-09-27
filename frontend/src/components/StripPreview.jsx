@@ -1,6 +1,7 @@
 // Renders the growing strip of thumbnails as the user confirms shots.
+import React from "react";
 export default function StripPreview({ photos = [], stripCount }) {
-  const placeholders = Math.max(stripCount - photos.length, 0);
+  const placeholders = Math.max((stripCount || 0) - photos.length, 0);
 
   return (
     <div className="strip-preview">

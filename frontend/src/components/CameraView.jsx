@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 // Turns on the webcam and exposes a ref parent components can use to
 // grab frames via canvasUtils.captureFrame(videoRef.current).

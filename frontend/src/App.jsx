@@ -11,45 +11,37 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import PhotoChoice from "./pages/PhotoChoice.jsx";
 import PhotoEditor from "./pages/PhotoEditor.jsx";
 
-// TODO: flesh out route guards — strip-count/avatar-design/capture/export
-// probably need a completed prior step (e.g. can't hit /capture without a stripCount set).
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
+    <div className="app-shell">
+      <div className="app-background" />
 
-      <Route path="/strip-count" element={<StripCount />} />
+      <div className="app-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
 
-      <Route path="/avatar-design" element={<AvatarDesign />} />
+          <Route path="/strip-count" element={<StripCount />} />
 
-      <Route
-        path="/photo-choice"
-        element={<PhotoChoice />}
-      />
+          <Route path="/avatar-design" element={<AvatarDesign />} />
 
-      <Route
-        path="/photo-editor"
-        element={<PhotoEditor />}
-      />
-      
-      <Route
-        path="/capture"
-        element={
-          <ProtectedRoute>
-            <ImageCapture />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/export"
-        element={
-          <ProtectedRoute>
-            <Export />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+          <Route path="/photo-choice" element={<PhotoChoice />} />
+
+          <Route path="/photo-editor" element={<PhotoEditor />} />
+
+          <Route path="/capture" element={<ImageCapture />} />
+
+          <Route
+            path="/export"
+            element={
+              <ProtectedRoute>
+                <Export />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </div>
   );
 }

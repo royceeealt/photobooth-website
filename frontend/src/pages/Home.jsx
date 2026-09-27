@@ -6,8 +6,6 @@ export default function Home() {
 
   return (
     <main className="home-page">
-      <div className="home-background" />
-
       <div className="home-frame">
         <div className="home-content">
           <h1 className="home-title">

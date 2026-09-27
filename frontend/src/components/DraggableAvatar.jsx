@@ -1,47 +1,210 @@
-import { useRef, useState } from "react";
-
-// Renders the composed avatar (skinTone/hair/accessory layers) as a
-// draggable overlay on top of a captured photo. Reports placement changes
-// (x, y, scale) up to the parent so it can be baked in via canvasUtils.
-export default function DraggableAvatar({ avatarConfig, placement, onPlacementChange }) {
+import React, { useEffect, useRef, useState } from "react";
+import { loadItemCatalog } from "../lib/itemCatalog.js";
+import PixelSprite from "./character/PixelSprite.jsx";
+export default function DraggableAvatar({
+  avatarConfig,
+  placement,
+  onPlacementChange,
+}) {
   const dragRef = useRef(null);
   const [dragging, setDragging] = useState(false);
+  const [catalog, setCatalog] = useState(null);
 
-  function handlePointerDown(e) {
+  useEffect(() => {
+    loadItemCatalog()
+      .then(setCatalog)
+      .catch((error) => {
+        console.error("Failed to load avatar catalog:", error);
+      });
+  }, []);
+
+  if (!catalog) {
+    return null;
+  }
+
+  function getAsset(category, id) {
+    if (!id) return null;
+
+    return catalog[category]?.find(
+      (item) => item.id === id
+    )?.assetPath;
+  }
+
+  const layers = [
+  {
+    name: "body",
+    src: getAsset(
+      "body",
+      avatarConfig?.body
+    ),
+    color: avatarConfig?.skinColor,
+  },
+  {
+    name: "eyes",
+    src: getAsset(
+      "eyes",
+      avatarConfig?.eyes
+    ),
+    color: null,
+  },
+  {
+    name: "lips",
+    src: getAsset(
+      "lips",
+      avatarConfig?.lips
+    ),
+    color: avatarConfig?.lipsColor,
+  },
+  {
+    name: "top",
+    src: getAsset(
+      "top",
+      avatarConfig?.top
+    ),
+    color: avatarConfig?.topColor,
+  },
+  {
+    name: "bottom",
+    src: getAsset(
+      "bottom",
+      avatarConfig?.bottom
+    ),
+    color: avatarConfig?.bottomColor,
+  },
+  {
+    name: "footwear",
+    src: getAsset(
+      "footwear",
+      avatarConfig?.footwear
+    ),
+    color:
+      avatarConfig?.footwearColor ||
+      "#222222",
+  },
+  {
+    name: "hair",
+    src: getAsset(
+      "hair",
+      avatarConfig?.hair
+    ),
+    color: avatarConfig?.hairColor,
+  },
+].filter((layer) => layer.src);
+
+  function handlePointerDown(event) {
+    event.preventDefault();
+
     setDragging(true);
-    dragRef.current = { startX: e.clientX, startY: e.clientY, origin: placement };
+
+    event.currentTarget.setPointerCapture?.(
+      event.pointerId
+    );
+
+    dragRef.current = {
+      startX: event.clientX,
+      startY: event.clientY,
+
+      origin: {
+        x: placement?.x ?? 0,
+        y: placement?.y ?? 0,
+        scale: placement?.scale ?? 1,
+      },
+    };
   }
 
-  function handlePointerMove(e) {
+  function handlePointerMove(event) {
     if (!dragging || !dragRef.current) return;
-    const { startX, startY, origin } = dragRef.current;
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    onPlacementChange({ ...origin, x: origin.x + dx, y: origin.y + dy });
+
+    const { startX, startY, origin } =
+      dragRef.current;
+
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+
+    onPlacementChange({
+      ...origin,
+      x: origin.x + dx,
+      y: origin.y + dy,
+    });
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(event) {
     setDragging(false);
     dragRef.current = null;
-  }
 
-  // TODO: layer skinTone -> hair -> accessory images at placement.x/y, scaled by placement.scale
+    event.currentTarget.releasePointerCapture?.(
+      event.pointerId
+    );
+  }
+  function handleWheel(event) {
+  event.preventDefault();
+
+  const currentScale =
+    placement?.scale ?? 1;
+
+  const amount =
+    event.deltaY < 0
+      ? 0.1
+      : -0.1;
+
+  const nextScale = Math.min(
+    2.5,
+    Math.max(
+      0.5,
+      currentScale + amount
+    )
+  );
+
+  onPlacementChange({
+    ...(placement || {}),
+    scale: nextScale,
+  });
+}
   return (
     <div
       className="draggable-avatar"
       style={{
         position: "absolute",
-        left: placement?.x ?? 0,
-        top: placement?.y ?? 0,
+
+        left: placement?.x ?? 50,
+        top: placement?.y ?? 50,
+
+        width: "124px",
+        height: "127px",
+
         transform: `scale(${placement?.scale ?? 1})`,
+        transformOrigin: "top left",
+
         cursor: dragging ? "grabbing" : "grab",
+
+        touchAction: "none",
+        userSelect: "none",
+
+        zIndex: 20,
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerUp}
+      onWheel={handleWheel}
     >
-      {/* avatarConfig layers render here */}
+      {layers.map((layer) =>
+  layer.color ? (
+    <PixelSprite
+      key={layer.name}
+      src={layer.src}
+      color={layer.color}
+      className=""
+    />
+  ) : (
+    <img
+      key={layer.name}
+      src={layer.src}
+      alt=""
+      draggable={false}
+      className="character-sprite"
+    />
+  )
+)}
     </div>
   );
 }

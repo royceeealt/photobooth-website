@@ -35,17 +35,9 @@ body,
 }
 
 body {
-  background-color: #20206b;
-  background-image: url("/assets/home/cloud-bg-frame0.png");
-  background-position: center top;
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
-
+  background: #f5f5f2;
   color: #222;
   font-family: Arial, Helvetica, sans-serif;
-
-  image-rendering: pixelated;
 }
 
 
@@ -1413,9 +1405,8 @@ body {
   font-family: "Courier New", monospace;
   font-size: 24px;
   font-weight: 700;
-
+  color: #ffffff;
   text-align: center;
-  color: white;
 }
 
 .photo-choice-options {
@@ -1506,7 +1497,7 @@ body {
 
   padding: 50px;
 
-  background: transparent;
+  background: #fff;
 }
 
 .photo-editor-workspace {
@@ -1567,41 +1558,39 @@ body {
 }
 
 .photo-editor-actions button {
-  width: 145px;
-  height: 60px;
+  padding: 10px 18px;
 
-  padding: 0;
-
-  border: 4px solid #222;
+  border: 3px solid #222;
   border-radius: 0;
 
-  background: #eeeeee;
-  color: #20204f;
+  background: white;
+  color: #222;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 18px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
   font-weight: 700;
 
   cursor: pointer;
 
-  box-shadow: 6px 6px 0 #777777;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+  box-shadow: 4px 4px 0 #222;
 }
 
 .photo-editor-actions button:hover {
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
+  transform: translate(2px, 2px);
+
+  box-shadow: 2px 2px 0 #222;
 }
 
 .photo-editor-actions button:active {
-  transform: translate(6px, 6px);
-  box-shadow: 0 0 0 #777777;
+  transform: translate(4px, 4px);
+
+  box-shadow: 0 0 0 #222;
 }
 
-
+.photo-editor-actions button:first-child {
+  background: #222;
+  color: white;
+}
 
 
 /* ========================================
@@ -1630,26 +1619,21 @@ body {
 }
 
 .editor-control button {
-  width: 76px;
-  height: 76px;
+  width: 38px;
+  height: 38px;
 
-  border: 4px solid #222;
+  border: 3px solid #222;
   border-radius: 0;
 
-  background: #eeeeee;
-  color: #20204f;
+  background: white;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 24px;
+  font-family: "Courier New", monospace;
+  font-size: 16px;
   font-weight: 700;
 
   cursor: pointer;
 
-  box-shadow: 6px 6px 0 #777777;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+  box-shadow: 4px 4px 0 #222;
 }
 
 .editor-control button:hover {
@@ -1665,22 +1649,19 @@ body {
 }
 
 .editor-control-display {
-  width: 220px;
-  height: 76px;
+  width: 110px;
+  height: 38px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
-  border: 4px solid #222;
-  background: #eeeeee;
-  color: #20204f;
+  border: 3px solid #222;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 22px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
   font-weight: 700;
-
-  box-shadow: 6px 6px 0 #777777;
 }
 
 
@@ -1691,22 +1672,20 @@ body {
 .editor-drawing-tools {
   margin-top: 10px;
 
-  width: 260px;
-  height: 76px;
+  padding: 10px 16px;
 
-  border: 4px solid #222;
+  border: 3px solid #222;
   border-radius: 0;
 
-  background: #eeeeee;
-  color: #20204f;
+  background: white;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 20px;
+  font-family: "Courier New", monospace;
+  font-size: 12px;
   font-weight: 700;
 
   cursor: pointer;
 
-  box-shadow: 6px 6px 0 #777777;
+  box-shadow: 4px 4px 0 #222;
 }
 
 .editor-drawing-tools:hover {
@@ -1762,7 +1741,6 @@ body {
   width: 100%;
   min-height: 100vh;
   overflow: hidden;
-  background: transparent;
 }
 
 /* Cloud + stars background */
@@ -1795,8 +1773,10 @@ body {
   top: 50%;
   left: 50%;
 
-  width: 72vw;
-  height: calc(72vw * 0.711111);
+  width: 100vw;
+  max-width: 1100px;
+  aspect-ratio: 1440 / 1024;
+  height: auto;
 
   transform: translate(-50%, -50%);
 
@@ -1806,9 +1786,10 @@ body {
   background-size: 100% 100%;
 
   image-rendering: pixelated;
-
   pointer-events: none;
 }
+
+
 /* Everything inside the frame */
 .home-content {
   position: absolute;
@@ -1818,7 +1799,7 @@ body {
 
   transform: translate(-50%, -50%);
 
-  width: 620px;
+  width: 560px;
 
   display: flex;
   flex-direction: column;
@@ -1837,10 +1818,10 @@ body {
 ========================= */
 
 .home-title {
-  margin: 0 0 55px;
+  margin: 0 0 38px;
 
   font-family: "Grand9K Pixel", "Courier New", monospace;
-  font-size: 50px;
+  font-size: 42px;
   line-height: 1;
 
   font-weight: 900;
@@ -1852,16 +1833,11 @@ body {
     5px 5px 0 #e86fc1;
 }
 
-
-/* =========================
-   SUBTITLE
-========================= */
-
 .home-subtitle {
-  margin: 0 0 28px;
+  margin: 0 0 22px;
 
   font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 30px;
+  font-size: 24px;
   line-height: 1.2;
 
   font-weight: 200;
@@ -1869,23 +1845,17 @@ body {
   color: #ffffff !important;
 }
 
-
-/* =========================
-   DESCRIPTION
-========================= */
-
 .home-description {
   margin: 0;
 
   font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 23px;
-  line-height: 1.7;
+  font-size: 18px;
+  line-height: 1.6;
 
   font-weight: 200;
 
   color: #ffffff;
 }
-
 
 /* =========================
    BUTTONS
@@ -1896,9 +1866,9 @@ body {
   justify-content: center;
   align-items: center;
 
-  gap: 65px;
+  gap: 55px;
 
-  margin-top: 65px;
+  margin-top: 45px;
 }
 
 .home-buttons button {
@@ -2034,195 +2004,357 @@ body {
   }
 }
 
-
 /* ========================================
-   AVATAR DESIGN - PIXEL UI OVERRIDES
-   Keeps existing structure/layout
+   Image Capture / Photobooth
 ======================================== */
 
-.avatar-design-page,
-.avatar-design-page button {
-  font-family: "Pixelify Sans", "Courier New", monospace;
+.capture-page {
+  align-items: flex-start;
+  padding-top: 40px;
 }
 
 
-/* Preview title */
-.avatar-design-page .section-label {
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 24px;
-  font-weight: 700;
+/* Main capture layout */
+
+.image-capture-page {
+  width: min(1180px, 100%);
+  min-height: 720px;
+
+  background: #ffffff;
+
+  border: 3px solid #222;
+  border-radius: 22px;
+
+  padding: 45px;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 50px;
 }
 
 
-/* Full / Half View buttons */
-.avatar-design-page .view-toggle button {
-  min-width: 145px;
-  height: 58px;
+/* ========================================
+   Left side
+======================================== */
 
-  padding: 0;
+.capture-left {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.capture-camera-label {
+  margin-bottom: 15px;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  text-transform: lowercase;
+}
+
+
+/* Camera workspace */
+
+.camera-workspace {
+  position: relative;
+
+  width: 100%;
+  max-width: 700px;
+
+  aspect-ratio: 4 / 3;
+
+  border: 2px solid #222;
 
   background: #eeeeee;
-  color: #20204f;
 
-  border: 4px solid #222;
-  border-radius: 0;
-
-  font-size: 18px;
-  font-weight: 700;
-
-  box-shadow: 6px 6px 0 #777777;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+  overflow: hidden;
 }
 
-.avatar-design-page .view-toggle button:hover {
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
+
+/*
+ * CameraView renders a <video>.
+ * These rules make it fill our workspace.
+ */
+
+.camera-workspace video {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
 }
 
-.avatar-design-page .view-toggle button:active {
-  transform: translate(6px, 6px);
-  box-shadow: 0 0 0 #777777;
-}
 
-.avatar-design-page .view-toggle button.active {
+/* Shoot button */
+
+.capture-shoot-button {
+  margin-top: 20px;
+
+  padding: 11px 22px;
+
+  border: 2px solid #222;
+  border-radius: 7px;
+
   background: #222;
-  color: #fff;
-  border-color: #222;
+  color: white;
 
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.capture-shoot-button:hover {
+  background: white;
+  color: #222;
+}
+
+.capture-shoot-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 
-/* Category name */
-.avatar-design-page .category-name {
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 22px;
-  font-weight: 700;
+/* ========================================
+   Avatar / Props picker row
+======================================== */
+
+.capture-pickers {
+  width: 100%;
+  max-width: 700px;
+
+  margin-top: 30px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 55px;
 }
 
 
-/* Category arrows */
-.avatar-design-page .category-arrow {
-  width: 52px;
-  height: 52px;
+.capture-picker {
+  display: grid;
 
-  border: 4px solid #222;
-  border-radius: 0;
+  grid-template-columns: 30px minmax(0, 1fr) 30px;
 
-  background: #eeeeee;
-  color: #20204f;
+  grid-template-rows: 75px auto;
 
-  font-size: 22px;
-  font-weight: 700;
+  align-items: center;
 
-  box-shadow: 6px 6px 0 #777777;
-}
-
-.avatar-design-page .category-arrow:hover {
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
-}
-
-.avatar-design-page .category-arrow:active {
-  transform: translate(6px, 6px);
-  box-shadow: 0 0 0 #777777;
+  column-gap: 8px;
 }
 
 
-/* Item cards */
-.avatar-design-page .item-card {
-  font-family: "Pixelify Sans", "Courier New", monospace;
+.capture-picker__preview {
+  height: 70px;
 
-  border: 4px solid #222;
-  border-radius: 0;
+  border: 2px solid #222;
 
-  background: #eeeeee;
-  color: #20204f;
+  background: #dddddd;
 
-  box-shadow: 6px 6px 0 #777777;
-}
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-.avatar-design-page .item-card:hover {
-  background: #ffffff;
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
-}
+  font-size: 12px;
 
-.avatar-design-page .item-card.selected {
-  background: #ffffff;
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
+  text-transform: lowercase;
 }
 
 
-/* Hair Colour / Skin Colour / etc. */
-.avatar-design-page .sprite-colour-label {
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 22px;
-  font-weight: 700;
+.capture-picker__arrow {
+  border: none;
+
+  background: transparent;
+
+  font-size: 20px;
+
+  cursor: pointer;
 }
 
 
-/* Drawing Tools */
-.avatar-design-page .drawing-tools {
+.capture-picker__label {
+  grid-column: 1 / 4;
+
+  text-align: center;
+
+  margin-top: 6px;
+
+  font-size: 12px;
+}
+
+
+/* ========================================
+   Right side
+======================================== */
+
+.capture-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.capture-right__title {
+  margin-bottom: 18px;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+
+/* ========================================
+   Strip preview
+======================================== */
+
+.strip-preview {
   width: 190px;
-  height: 58px;
 
-  padding: 0;
+  display: flex;
+  flex-direction: column;
 
-  border: 4px solid #222;
-  border-radius: 0;
+  gap: 12px;
+}
 
+
+.strip-preview__thumb,
+.strip-preview__placeholder {
+  width: 190px;
+
+  aspect-ratio: 4 / 3;
+
+  border: 2px solid #222;
+
+  display: block;
+
+  object-fit: cover;
+}
+
+
+.strip-preview__placeholder {
   background: #eeeeee;
-  color: #20204f;
-
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 18px;
-  font-weight: 700;
-
-  box-shadow: 6px 6px 0 #777777;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
-}
-
-.avatar-design-page .drawing-tools:hover {
-  background: #ffffff;
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
-}
-
-.avatar-design-page .drawing-tools:active {
-  transform: translate(6px, 6px);
-  box-shadow: 0 0 0 #777777;
 }
 
 
-/* Confirm / Skip / Randomize / Reset */
-.avatar-design-page .avatar-actions button {
-  font-family: "Pixelify Sans", "Courier New", monospace;
+.capture-continue-button {
+  margin-top: 25px;
 
-  border: 4px solid #222;
-  border-radius: 0;
+  padding: 10px 14px;
 
-  box-shadow: 6px 6px 0 #777777;
+  border: 2px solid #222;
+  border-radius: 6px;
 
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+  background: #222;
+  color: white;
+
+  font-family: inherit;
+  font-size: 12px;
+
+  cursor: pointer;
 }
 
-.avatar-design-page .avatar-actions button:hover {
-  transform: translate(3px, 3px);
-  box-shadow: 3px 3px 0 #777777;
+
+.capture-continue-button:hover {
+  background: white;
+  color: #222;
 }
 
-.avatar-design-page .avatar-actions button:active {
-  transform: translate(6px, 6px);
-  box-shadow: 0 0 0 #777777;
+
+/* ========================================
+   Responsive
+======================================== */
+
+@media (max-width: 850px) {
+  .image-capture-page {
+    grid-template-columns: 1fr;
+
+    padding: 30px 20px;
+  }
+
+  .capture-right {
+    align-items: center;
+  }
+
+  .capture-pickers {
+    gap: 20px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .capture-pickers {
+    grid-template-columns: 1fr;
+  }
+}
+/* Small avatar preview inside the Capture page picker */
+.capture-picker__preview {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.capture-picker__preview .character-stage {
+  transform: scale(0.6);
+  transform-origin: center;
+}
+
+
+/* ================================
+   COMMON APP BACKGROUND
+   ================================ */
+
+.app-shell {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #20206b;
+}
+
+.app-background {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background-image: url("/assets/home/cloud-bg-frame0.png");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-color: #20206b;
+
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app-frame {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+
+  width: 72vw;
+  height: calc(72vw * 0.711111);
+
+  transform: translate(-50%, -50%);
+
+  background-image: url("/assets/home/frame-bg-frame0.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  image-rendering: pixelated;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.app-content {
+  position: relative;
+  min-height: 100vh;
+  z-index: 2;
 }
