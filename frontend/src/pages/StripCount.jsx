@@ -1,33 +1,27 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useSessionStore from "../store/useSessionStore.js";
 
 export default function StripCount() {
   const navigate = useNavigate();
+  const setAvatarCount = useSessionStore((s) => s.setAvatarCount);
+  const setStripCount = useSessionStore((s) => s.setStripCount);
 
-  const [avatarCount, setAvatarCount] = useState("");
+  const [avatarCount, setAvatarCountLocal] = useState("");
   const [layoutSize, setLayoutSize] = useState("");
 
   function handleContinue(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    if (!avatarCount || !layoutSize) {
-      return;
-    }
-
-    /*
-     * Temporary:
-     * We are passing these values to the next page through
-     * React Router navigation state.
-     *
-     * Once we connect useSessionStore, these will be stored there instead.
-     */
-    navigate("/avatar-design", {
-      state: {
-        avatarCount: Number(avatarCount),
-        stripCount: Number(layoutSize),
-      },
-    });
+  if (!avatarCount || !layoutSize) {
+    return;
   }
+
+  setAvatarCount(Number(avatarCount));
+  setStripCount(Number(layoutSize));
+
+  navigate("/avatar-design");
+}
 
   return (
     <main className="page">
@@ -42,7 +36,7 @@ export default function StripCount() {
           <select
             id="avatar-count"
             value={avatarCount}
-            onChange={(event) => setAvatarCount(event.target.value)}
+            onChange={(event) => setAvatarCountLocal(event.target.value)}
           >
             <option value="">Select</option>
             <option value="1">1 avatar</option>

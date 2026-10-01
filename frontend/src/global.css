@@ -18,6 +18,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Handjet";
+  src: url("/assets/fonts/Handjet.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 
 /* ================================
    Global reset
@@ -1756,7 +1764,7 @@ body {
 
   transform: translateX(-50%);
 
-  background-image: url("/assets/home/cloud-bg-frame0.png");
+  background-image: url("/assets/home/bg-design.png");
   background-position: center top;
   background-repeat: no-repeat;
   background-size: 100% auto;
@@ -1820,27 +1828,30 @@ body {
 .home-title {
   margin: 0 0 38px;
 
-  font-family: "Grand9K Pixel", "Courier New", monospace;
-  font-size: 42px;
-  line-height: 1;
+  font-family: "Handjet", sans-serif;
+  font-size: 72px;
+  font-weight: 700;
 
-  font-weight: 900;
+  font-variation-settings:
+    "ELGR" 1,
+    "ELSH" 16;
+
+  line-height: 0.85;
   letter-spacing: 0;
 
   color: #ffffff;
-
-  text-shadow:
-    5px 5px 0 #e86fc1;
+  text-shadow: none;
 }
+
 
 .home-subtitle {
   margin: 0 0 22px;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 24px;
+  font-family: "Handjet", sans-serif;
+  font-size: 32px;
   line-height: 1.2;
 
-  font-weight: 200;
+  font-weight: 400;
 
   color: #ffffff !important;
 }
@@ -1848,11 +1859,11 @@ body {
 .home-description {
   margin: 0;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 18px;
+  font-family: "Handjet", sans-serif;
+  font-size: 27px;
   line-height: 1.6;
 
-  font-weight: 200;
+  font-weight: 400;
 
   color: #ffffff;
 }
@@ -1885,9 +1896,9 @@ body {
   background: #eeeeee;
   color: #20204f;
 
-  font-family: "Pixelify Sans", "Courier New", monospace;
-  font-size: 14px;
-  font-weight: 200;
+  font-family: "Handjet", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
 
   cursor: pointer;
 
@@ -2322,10 +2333,10 @@ body {
   width: 100vw;
   height: 100vh;
 
-  background-image: url("/assets/home/cloud-bg-frame0.png");
+  background-image: url("/assets/home/bg-design.png");
   background-position: center top;
   background-repeat: no-repeat;
-  background-size: 100% auto;
+  background-size: 100% 100%;
   background-color: #20206b;
 
   image-rendering: pixelated;
@@ -2357,4 +2368,321 @@ body {
   position: relative;
   min-height: 100vh;
   z-index: 2;
+}
+
+
+/* ========================================
+   PIXEL ACCOUNT PAGES
+   Login + Signup
+======================================== */
+
+.account-screen {
+  position: relative;
+
+  min-height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 60px 20px;
+
+  background: transparent;
+
+  overflow: hidden;
+}
+
+
+/* New pixel frame */
+
+.account-screen::before {
+  content: "";
+
+  position: absolute;
+
+  top: 48%;
+  left: 48%;
+
+  width: min(92vw, 1150px);
+  aspect-ratio: 1440 / 1150;
+
+  transform: translate(-50%, -50%);
+
+  background-image: url("/assets/home/frame2-frame0.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  image-rendering: pixelated;
+
+  pointer-events: none;
+
+  z-index: 0;
+}
+
+
+/* Content sits inside the frame */
+
+.account-form-panel {
+  position: relative;
+
+  z-index: 1;
+
+  width: min(560px, 70vw);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  color: #ffffff;
+}
+
+.signup-form-panel {
+  width: min(680px, 72vw);
+}
+
+/* Signup uses a taller frame */
+
+.account-screen:has(.signup-form-panel)::before {
+  width: min(95vw, 1300px);
+  height: 1100px;
+  aspect-ratio: auto;
+
+  top: 48%;
+  left: 47%;
+}
+
+
+/* ----------------------------------------
+   Title
+---------------------------------------- */
+
+.account-form-title {
+  margin: 0 0 34px;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 42px;
+  font-weight: 600;
+
+  line-height: 1;
+
+  color: #ffffff;
+
+  text-align: center;
+}
+
+
+/* ----------------------------------------
+   Form
+---------------------------------------- */
+
+.pixel-auth-form {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+}
+
+
+/* ----------------------------------------
+   Fields
+---------------------------------------- */
+
+.pixel-form-field {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.pixel-form-field label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 25px;
+  font-weight: 500;
+
+  line-height: 1;
+
+  color: #ffffff;
+}
+
+.pixel-form-field input {
+  width: 100%;
+  height: 58px;
+
+  padding: 8px 12px;
+
+  border: 5px solid #8f8f8f;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 24px;
+  font-weight: 400;
+
+  outline: none;
+
+  image-rendering: pixelated;
+}
+
+.pixel-form-field input:focus {
+  border-color: #aaaaaa;
+}
+
+
+/* ----------------------------------------
+   Signup password row
+---------------------------------------- */
+
+.signup-password-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 55px;
+}
+
+
+/* ----------------------------------------
+   Button
+---------------------------------------- */
+
+.pixel-auth-button {
+  align-self: center;
+
+  min-width: 190px;
+  height: 58px;
+
+  margin-top: 18px;
+
+  border: 5px solid #8f8f8f;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 27px;
+  font-weight: 500;
+
+  cursor: pointer;
+
+  position: relative;
+
+  image-rendering: pixelated;
+}
+
+.pixel-auth-button::before,
+.pixel-auth-button::after {
+  content: "";
+
+  position: absolute;
+
+  top: -8px;
+
+  width: 13px;
+  height: 13px;
+
+  background: #8f8f8f;
+
+  box-shadow: 0 60px 0 #8f8f8f;
+}
+
+.pixel-auth-button::before {
+  left: -8px;
+}
+
+.pixel-auth-button::after {
+  right: -8px;
+}
+
+.pixel-auth-button:hover {
+  background: #ffffff;
+  transform: translate(2px, 2px);
+}
+
+.pixel-auth-button:active {
+  transform: translate(4px, 4px);
+}
+
+
+/* ----------------------------------------
+   Errors
+---------------------------------------- */
+
+.pixel-auth-error {
+  margin: 4px 0 10px;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 20px;
+
+  color: #ff8acb;
+
+  text-align: center;
+}
+
+
+/* ----------------------------------------
+   Login / Signup switch
+---------------------------------------- */
+
+.pixel-auth-switch {
+  margin: 30px 0 0;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 20px;
+
+  color: #ffffff;
+
+  text-align: center;
+}
+
+.pixel-auth-switch a {
+  color: #ff8bd2;
+  text-decoration: none;
+}
+
+.pixel-auth-switch a:hover {
+  text-decoration: underline;
+}
+
+
+/* ----------------------------------------
+   Mobile
+---------------------------------------- */
+
+@media (max-width: 700px) {
+  .account-screen {
+    padding: 50px 15px;
+  }
+
+  .account-screen::before {
+    width: 120vw;
+  }
+
+  .account-form-panel,
+  .signup-form-panel {
+    width: 70vw;
+  }
+
+  .account-form-title {
+    font-size: 34px;
+  }
+
+  .pixel-form-field label {
+    font-size: 21px;
+  }
+
+  .pixel-form-field input {
+    height: 52px;
+    font-size: 21px;
+  }
+
+  .signup-password-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
 }

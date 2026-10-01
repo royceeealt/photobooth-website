@@ -44,151 +44,88 @@ export default function Signup() {
   }
 
   return (
-    <main className="page">
-      <section className="account-page signup-account-page">
+    <main className="account-screen">
+      <section className="account-form-panel signup-form-panel">
+        <h1 className="account-form-title">
+          create your account
+        </h1>
 
-        {/* Page heading */}
-        <div className="account-heading">
-          <p className="eyebrow">
-            Polaroid Avatar Creator
-          </p>
+        <form onSubmit={handleSubmit} className="pixel-auth-form">
+          <div className="pixel-form-field">
+            <label htmlFor="full-name">full name</label>
 
-          <h1 className="account-title">
-            Account &amp; Avatar
-          </h1>
+            <input
+              id="full-name"
+              type="text"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+              required
+            />
+          </div>
 
-          <p className="account-subtitle">
-            Sign up branch for first-time users.
-          </p>
-        </div>
+          <div className="pixel-form-field">
+            <label htmlFor="signup-email">email address</label>
 
+            <input
+              id="signup-email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
 
-        {/* Signup card */}
-        <section className="auth-card signup-card">
-
-          <p className="auth-label">
-            Sign Up
-          </p>
-
-          <h2 className="auth-title">
-            Create your account
-          </h2>
-
-          <p className="auth-description">
-            Capture the essentials now so the avatar step can focus on style
-            and customization.
-          </p>
-
-
-          <form onSubmit={handleSubmit}>
-
-            {/* Full name */}
-            <div className="form-field">
-              <label htmlFor="full-name">
-                Full name
-              </label>
+          <div className="signup-password-row">
+            <div className="pixel-form-field">
+              <label htmlFor="signup-password">password</label>
 
               <input
-                id="full-name"
-                type="text"
-                value={fullName}
-                onChange={(event) => setFullName(event.target.value)}
+                id="signup-password"
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
                 required
               />
             </div>
 
-
-            {/* Email */}
-            <div className="form-field">
-              <label htmlFor="signup-email">
-                Email address
+            <div className="pixel-form-field">
+              <label htmlFor="confirm-password">
+                confirm password
               </label>
 
               <input
-                id="signup-email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => {
+                  setConfirmPassword(event.target.value);
+                  setPasswordError("");
+                }}
                 required
               />
             </div>
+          </div>
 
+          {passwordError && (
+            <p className="pixel-auth-error">
+              {passwordError}
+            </p>
+          )}
 
-            {/* Password row */}
-            <div className="password-row">
+          {error && (
+            <p className="pixel-auth-error">
+              {error}
+            </p>
+          )}
 
-              <div className="form-field">
-                <label htmlFor="signup-password">
-                  Password
-                </label>
-
-                <input
-                  id="signup-password"
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  required
-                />
-              </div>
-
-
-              <div className="form-field">
-                <label htmlFor="confirm-password">
-                  Confirm password
-                </label>
-
-                <input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(event) => {
-                    setConfirmPassword(event.target.value);
-                    setPasswordError("");
-                  }}
-                  required
-                />
-              </div>
-
-            </div>
-
-
-            {/* Errors */}
-            {passwordError && (
-              <p className="error">
-                {passwordError}
-              </p>
-            )}
-
-            {error && (
-              <p className="error">
-                {error}
-              </p>
-            )}
-
-
-            {/* Bottom row */}
-            <div className="auth-footer">
-
-              <p>
-                You can personalize your avatar on the next step.
-              </p>
-
-              <button
-                className="primary-button"
-                type="submit"
-                disabled={status === "loading"}
-              >
-                {status === "loading"
-                  ? "Creating..."
-                  : "Create account →"}
-              </button>
-
-            </div>
-
-          </form>
-
-        </section>
-
+          <button
+            className="pixel-auth-button"
+            type="submit"
+            disabled={status === "loading"}
+          >
+            {status === "loading" ? "creating..." : "CONFIRM"}
+          </button>
+        </form>
       </section>
     </main>
   );

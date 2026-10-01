@@ -24,112 +24,56 @@ export default function Login() {
   }
 
   return (
-    <main className="page">
-      <section className="account-page">
+    <main className="account-screen">
+      <section className="account-form-panel">
+        <h1 className="account-form-title">
+          enter your account
+        </h1>
 
-        {/* Page heading */}
-        <div className="account-heading">
-          <p className="eyebrow">
-            Polaroid Avatar Creator
-          </p>
+        <form onSubmit={handleSubmit} className="pixel-auth-form">
+          <div className="pixel-form-field">
+            <label htmlFor="email">email address</label>
 
-          <h1 className="account-title">
-            Account &amp; Avatar
-          </h1>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
 
-          <p className="account-subtitle">
-            Login branch for returning users.
-          </p>
-        </div>
+          <div className="pixel-form-field">
+            <label htmlFor="password">password</label>
 
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+          </div>
 
-        {/* Login card */}
-        <section className="auth-card">
+          {error && (
+            <p className="pixel-auth-error">
+              {error}
+            </p>
+          )}
 
-          <p className="auth-label">
-            Login
-          </p>
+          <button
+            className="pixel-auth-button"
+            type="submit"
+            disabled={status === "loading"}
+          >
+            {status === "loading" ? "logging in..." : "LOGIN"}
+          </button>
+        </form>
 
-          <h2 className="auth-title">
-            Welcome back
-          </h2>
-
-          <p className="auth-description">
-            Sign in with the same account used for previous avatar sessions.
-          </p>
-
-
-          <form onSubmit={handleSubmit}>
-
-            {/* Email */}
-            <div className="form-field">
-              <label htmlFor="email">
-                Email address
-              </label>
-
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-            </div>
-
-
-            {/* Password */}
-            <div className="form-field">
-              <label htmlFor="password">
-                Password
-              </label>
-
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-              />
-            </div>
-
-
-            {error && (
-              <p className="error">
-                {error}
-              </p>
-            )}
-
-
-            {/* Bottom row */}
-            <div className="auth-footer">
-
-              <p>
-                Saved avatars remain attached to your account.
-              </p>
-
-              <button
-                className="primary-button"
-                type="submit"
-                disabled={status === "loading"}
-              >
-                {status === "loading" ? "Logging in..." : "Log in →"}
-              </button>
-
-            </div>
-
-          </form>
-
-        </section>
-
-
-        {/* Back to signup */}
-        <p className="auth-switch">
-          Don't have an account?{" "}
-          <Link to="/signup">
-            Sign up
-          </Link>
+        <p className="pixel-auth-switch">
+          don't have an account?{" "}
+          <Link to="/signup">sign up</Link>
         </p>
-
       </section>
     </main>
   );
