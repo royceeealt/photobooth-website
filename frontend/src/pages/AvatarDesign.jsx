@@ -57,6 +57,11 @@ export default function AvatarDesign() {
   const avatarView = useSessionStore((s) => s.avatarView);
   const setAvatarView = useSessionStore((s) => s.setAvatarView);
   const resetAvatar = useSessionStore((s) => s.resetAvatar);
+    const avatarCount = useSessionStore((s) => s.avatarCount);
+  const activeAvatarIndex = useSessionStore((s) => s.activeAvatarIndex);
+  const saveCurrentAvatar = useSessionStore((s) => s.saveCurrentAvatar);
+  const setActiveAvatar = useSessionStore((s) => s.setActiveAvatar);
+    const skipAvatars = useSessionStore((s) => s.skipAvatars);
 
   const [categoryIndex, setCategoryIndex] = useState(0);
   const [skinColor, setSkinColor] = useState("#D99A78");
@@ -128,12 +133,25 @@ export default function AvatarDesign() {
     setShowDrawingTools(false);
   }
 
-  function handleConfirm() {
-    navigate("/capture");
+    function handleConfirm() {
+    // Copy the avatar being edited into avatars[].
+    saveCurrentAvatar();
+
+    // More avatars to create? Load the next slot and stay on this page.
+    if (activeAvatarIndex < avatarCount - 1) {
+      setActiveAvatar(activeAvatarIndex + 1);
+      setAvatarView("full");
+      setCategoryIndex(0);
+      setShowDrawingTools(false);
+      return;
+    }
+
+        navigate("/photo-choice");
   }
 
-  function handleSkip() {
-    navigate("/capture");
+    function handleSkip() {
+    skipAvatars();
+    navigate("/photo-choice");
   }
 
   return (
@@ -146,8 +164,8 @@ export default function AvatarDesign() {
 
         <div className="avatar-preview-section">
 
-          <p className="section-label">
-            AVATAR PREVIEW
+                    <p className="section-label">
+            AVATAR PREVIEW ({activeAvatarIndex + 1} of {avatarCount})
           </p>
 
           <div className="avatar-preview">
@@ -175,7 +193,9 @@ export default function AvatarDesign() {
               className="primary-action"
               onClick={handleConfirm}
             >
-              Confirm →
+                            {activeAvatarIndex < avatarCount - 1
+                ? "Save & next avatar →"
+                : "Confirm →"}
             </button>
 
             <button onClick={handleSkip}>

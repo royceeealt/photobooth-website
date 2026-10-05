@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 const defaultAvatarConfig = {
   body: "body_01",
@@ -51,7 +52,7 @@ const createDefaultAvatar = () => ({
 });
 
 
-const useSessionStore = create((set) => ({
+const useSessionStore = create(persist((set) => ({
   // =========================
   // Photo strip setup
   // =========================
@@ -92,9 +93,11 @@ const useSessionStore = create((set) => ({
   // Strip setup
   // =========================
 
-  setStripCount: (count) =>
+    setStripCount: (count) =>
     set({
       stripCount: count,
+      avatarPlacements: [],
+      propPlacements: [],
     }),
 
 
@@ -120,7 +123,7 @@ const useSessionStore = create((set) => ({
           state.activeAvatarIndex || 0,
           safeCount - 1
         );
-
+        
       return {
         avatarCount: safeCount,
         avatars,
@@ -131,7 +134,15 @@ const useSessionStore = create((set) => ({
       };
     }),
 
-
+  // Skip avatar creation entirely: no avatars exist for this session.
+  // (setAvatarCount can't represent this — it always keeps a minimum of 1.)
+  skipAvatars: () =>
+    set({
+      avatarCount: 0,
+      avatars: [],
+      activeAvatarIndex: 0,
+      avatarConfig: createDefaultAvatar(),
+    }),
   // =========================
   // Avatar selection
   // =========================
@@ -230,7 +241,66 @@ const useSessionStore = create((set) => ({
         photo,
       ],
     })),
+      // Replace all captured photos at once (used by upload, or to clear them).
+  setCapturedPhotos: (photos) => set({ capturedPhotos: photos }),
+      // =========================
+  // Polaroid decorations
+  // Positions are the CENTRE point, in Polaroid-canvas pixels (1080 wide).
+  // avatarIndex points into avatars[]; the same avatar can be placed
+  // any number of times.
+  // =========================
 
+  avatarPlacements: [],
+
+  addAvatarPlacement: (placement) =>
+    set((state) => ({
+      avatarPlacements: [...state.avatarPlacements, placement],
+    })),
+
+  updateAvatarPlacement: (id, patch) =>
+    set((state) => ({
+      avatarPlacements: state.avatarPlacements.map((p) =>
+        p.id === id ? { ...p, ...patch } : p
+      ),
+    })),
+
+  removeAvatarPlacement: (id) =>
+    set((state) => ({
+      avatarPlacements: state.avatarPlacements.filter((p) => p.id !== id),
+    })),
+
+  clearAvatarPlacements: () => set({ avatarPlacements: [] }),
+    propPlacements: [],
+
+  addPropPlacement: (placement) =>
+    set((state) => ({
+      propPlacements: [...state.propPlacements, placement],
+    })),
+
+  updatePropPlacement: (id, patch) =>
+    set((state) => ({
+      propPlacements: state.propPlacements.map((p) =>
+        p.id === id ? { ...p, ...patch } : p
+      ),
+    })),
+
+  removePropPlacement: (id) =>
+    set((state) => ({
+      propPlacements: state.propPlacements.filter((p) => p.id !== id),
+    })),
+
+  clearPropPlacements: () => set({ propPlacements: [] }),
+  replaceCapturedPhoto: (index, photo) =>
+    set((state) => {
+      if (index < 0 || index >= state.capturedPhotos.length) {
+        return state;
+      }
+
+      const capturedPhotos = [...state.capturedPhotos];
+      capturedPhotos[index] = photo;
+
+      return { capturedPhotos };
+    }),
 
   retakeLastPhoto: () =>
     set((state) => ({
@@ -262,9 +332,13 @@ const useSessionStore = create((set) => ({
   // Reset entire session
   // =========================
 
-  resetSession: () =>
+    resetSession: () => {
+    sessionStorage.removeItem("pixibooth-session");
+
     set({
       stripCount: null,
+      avatarPlacements: [],
+      propPlacements: [],
 
       avatarCount: 1,
 
@@ -280,8 +354,28 @@ const useSessionStore = create((set) => ({
         createDefaultAvatar(),
 
       capturedPhotos: [],
+    });
+  },
     }),
-}));
+    {
+      name: "pixibooth-session",
+      storage: createJSONStorage(() => sessionStorage),
 
+      // Only persist the small stuff. capturedPhotos is excluded on
+      // purpose — it's too big for sessionStorage and is handled
+      // separately (IndexedDB) in a later step.
+      partialize: (state) => ({
+        stripCount: state.stripCount,
+        avatarCount: state.avatarCount,
+        avatars: state.avatars,
+        activeAvatarIndex: state.activeAvatarIndex,
+        avatarView: state.avatarView,
+        avatarConfig: state.avatarConfig,
+        avatarPlacements: state.avatarPlacements,
+        propPlacements: state.propPlacements,
+      }),
+    }
+  )
+);
 
 export default useSessionStore;

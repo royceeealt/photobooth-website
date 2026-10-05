@@ -2249,7 +2249,50 @@ body {
 .strip-preview__placeholder {
   background: #eeeeee;
 }
+.strip-preview__item {
+  position: relative;
+  width: 190px;
+}
 
+.strip-preview__retake,
+.strip-preview__retaking-label {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-family: inherit;
+  font-size: 12px;
+  color: white;
+  background: rgba(34, 34, 34, 0.65);
+}
+
+.strip-preview__retake {
+  border: 2px solid #222;
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.strip-preview__item:hover .strip-preview__retake,
+.strip-preview__retake:focus-visible {
+  opacity: 1;
+}
+
+.strip-preview__item--retaking .strip-preview__thumb {
+  outline: 3px solid #222;
+}
+
+/* Touch screens have no hover: keep the button visible. */
+@media (hover: none) {
+  .strip-preview__retake {
+    opacity: 1;
+    inset: auto 0 0 0;
+    padding: 4px 0;
+  }
+}
 
 .capture-continue-button {
   margin-top: 25px;
@@ -2685,4 +2728,354 @@ body {
     grid-template-columns: 1fr;
     gap: 0;
   }
+}
+/* ========================================
+   Polaroid Design page
+======================================== */
+
+.design-page {
+  align-items: flex-start;
+  padding-top: 40px;
+}
+
+.polaroid-design-page {
+  width: min(1100px, 100%);
+
+  background: #ffffff;
+
+  border: 3px solid #222;
+  border-radius: 22px;
+
+  padding: 36px 45px;
+}
+
+.design-title {
+  margin: 0 0 24px;
+
+  font-size: 28px;
+}
+
+.design-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 50px;
+  align-items: start;
+}
+
+.design-left {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.design-back {
+  align-self: flex-start;
+}
+
+.design-canvas {
+  position: relative;
+
+  overflow: hidden;
+
+  background: #ffffff;
+  outline: 2px solid #222;
+}
+
+.design-actions {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.design-button {
+  padding: 10px 22px;
+
+  border: 2px solid #222;
+  border-radius: 7px;
+
+  background: #222;
+  color: white;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.design-button:hover:not(:disabled) {
+  background: white;
+  color: #222;
+}
+
+.design-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.design-button--ghost {
+  background: white;
+  color: #222;
+}
+
+.design-button--ghost:hover:not(:disabled) {
+  background: #222;
+  color: white;
+}
+
+/* Right-hand controls */
+
+.design-right {
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+
+.design-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.design-row__control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.design-row__thumb {
+  width: 130px;
+  height: 130px;
+
+  border: 2px solid #222;
+
+  background: #eeeeee;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.design-row__thumb img {
+  max-width: 100%;
+  max-height: 100%;
+
+  object-fit: contain;
+}
+
+.design-row__soon {
+  font-size: 12px;
+  opacity: 0.5;
+}
+
+.design-row__label {
+  font-size: 14px;
+}
+
+.design-arrow {
+  width: 32px;
+  height: 32px;
+
+  border: 2px solid #222;
+  border-radius: 6px;
+
+  background: white;
+  color: #222;
+
+  font-family: inherit;
+  font-size: 18px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.design-arrow:hover:not(:disabled) {
+  background: #222;
+  color: white;
+}
+
+.design-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+@media (max-width: 850px) {
+  .design-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .polaroid-design-page {
+    padding: 24px 18px;
+  }
+}
+/* Placed avatars / props on the Polaroid */
+
+.design-placed {
+  position: absolute;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.design-placed:active {
+  cursor: grabbing;
+}
+
+.design-placed--selected {
+  outline: 2px dashed #222;
+}
+
+.design-placed__remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+
+  width: 22px;
+  height: 22px;
+  padding: 0;
+
+  border: 2px solid #222;
+  border-radius: 50%;
+
+  background: #ffffff;
+  color: #222;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+/* The picker thumbnail becomes a button when it adds something. */
+button.design-row__thumb {
+  padding: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button.design-row__thumb:hover {
+  background: #dddddd;
+}
+.design-placed__resize {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+
+  width: 16px;
+  height: 16px;
+
+  border: 2px solid #222;
+  background: #ffffff;
+
+  cursor: nwse-resize;
+  touch-action: none;
+}
+/* Additions to Photo Editor styling for the working editor page */
+
+.photo-editor-back {
+  align-self: flex-start;
+
+  margin-bottom: 18px;
+
+  padding: 9px 16px;
+
+  border: 3px solid #222;
+  border-radius: 0;
+
+  background: white;
+  color: #222;
+
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 4px 4px 0 #222;
+
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.photo-editor-back:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #222;
+}
+
+.photo-editor-back:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #222;
+}
+
+/* editor-control-display as a thumbnail + label, when it holds a picker */
+.editor-control-display.editor-control-display--pick {
+  width: 110px;
+  height: 110px;
+
+  padding: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.editor-control-display--pick img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.editor-control-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.editor-control-label {
+  font-family: "Courier New", monospace;
+  font-size: 12px;
+  font-weight: 700;
+
+  text-transform: lowercase;
+  text-align: center;
+}
+
+.editor-control-display:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.design-stage {
+  position: relative;
+}
+
+.photo-editor-placeholder--canvas {
+  position: absolute;
+  inset: 0;
+  height: auto;
+  overflow: hidden;
+}
+
+.design-handles-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.design-handles-layer .design-placed__remove,
+.design-handles-layer .design-placed__resize {
+  pointer-events: auto;
 }
