@@ -74,15 +74,43 @@ export async function renderPolaroid({
   ctx.imageSmoothingEnabled = false;
 
   // 4. Avatars
+  // 4. Avatars
   for (const placement of avatarPlacements) {
     const config = avatars[placement.avatarIndex];
-    if (!config) continue; // avatar no longer exists
+    if (!config) continue;
 
     const sprite = await renderAvatarCanvas(config);
+
     const w = AVATAR_BASE_SIZE.width * placement.scale;
     const h = AVATAR_BASE_SIZE.height * placement.scale;
 
-    ctx.drawImage(sprite, placement.x - w / 2, placement.y - h / 2, w, h);
+    if (placement.view === "half") {
+      const cropRatio = 150 / 254;
+      const sourceCropHeight = Math.round(sprite.height * cropRatio);
+      const destinationHeight = h * cropRatio;
+
+      const top = placement.y - h / 2;
+
+      ctx.drawImage(
+        sprite,
+        0,
+        0,
+        sprite.width,
+        sourceCropHeight,
+        placement.x - w / 2,
+        top,
+        w,
+        destinationHeight
+      );
+    } else {
+      ctx.drawImage(
+        sprite,
+        placement.x - w / 2,
+        placement.y - h / 2,
+        w,
+        h
+      );
+    }
   }
 
   // 5. Props (on top of avatars)
