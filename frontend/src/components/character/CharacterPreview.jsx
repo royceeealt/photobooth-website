@@ -38,12 +38,9 @@ export default function CharacterPreview({
 
   const getAssetPath = (items, id) => {
     const item = items?.find((item) => item.id === id);
-
     if (!item) return undefined;
 
-    return isHalfView
-      ? item.halfAssetPath || item.assetPath
-      : item.assetPath;
+    return item.assetPath;
   };
 
   return (
@@ -62,12 +59,7 @@ export default function CharacterPreview({
         {/* Body sprite */}
         {avatarConfig.body && catalog && (
           <PixelSprite
-            src={getAssetPath(
-              catalog.body,
-              avatarView === "half"
-                ? "body_half"
-                : avatarConfig.body
-            )}
+            src={getAssetPath(catalog.body, avatarConfig.body)}
             color={skinColor}
             region="skin"
           />
@@ -101,37 +93,23 @@ export default function CharacterPreview({
         )}
 
         {/* Real bottom sprite */}
-        {avatarConfig.bottom && catalog && avatarView === "full" && (
+        {avatarConfig.bottom && catalog && (
           <PixelSprite
-            src={
-              catalog.bottom?.find(
-                (item) => item.id === avatarConfig.bottom
-              )?.assetPath
-            }
+            src={catalog.bottom?.find(item => item.id === avatarConfig.bottom)?.assetPath}
             color={bottomColor}
           />
         )}
 
-        {/* Real top sprite */}
-        {avatarConfig.top && catalog && avatarView === "full" && (
+        {avatarConfig.top && catalog && (
           <PixelSprite
-            src={
-              catalog.top?.find(
-                (item) => item.id === avatarConfig.top
-              )?.assetPath
-            }
+            src={catalog.top?.find(item => item.id === avatarConfig.top)?.assetPath}
             color={topColor}
           />
         )}
 
-        {/* Real footwear sprite */}
-        {avatarConfig.footwear && catalog && avatarView === "full" && (
+        {avatarConfig.footwear && catalog && (
           <PixelSprite
-            src={
-              catalog.footwear?.find(
-                (item) => item.id === avatarConfig.footwear
-              )?.assetPath
-            }
+            src={catalog.footwear?.find(item => item.id === avatarConfig.footwear)?.assetPath}
             color={avatarConfig.footwearColor || "#222222"}
           />
         )}

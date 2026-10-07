@@ -30,6 +30,18 @@
       "category": "hair",
       "name": "Ponytail",
       "assetPath": "/assets/items/hair/hair_05.png"
+    },
+    {
+      "id": "hair_06",
+      "category": "hair",
+      "name": "Braids",
+      "assetPath": "/assets/items/hair/hair_06.png"
+    },
+    {
+      "id": "hair_07",
+      "category": "hair",
+      "name": "Short Bob",
+      "assetPath": "/assets/items/hair/hair_07.png"
     }
 
   ],
@@ -93,13 +105,6 @@
 
   "eyes": [
     {
-      "id": "eyes_01",
-      "category": "eyes",
-      "name": "Eyes",
-      "assetPath": "/assets/items/eyes/eyes01.png",
-      "halfAssetPath": "/assets/items/half/eyes/eyes_01.png"
-    },
-    {
       "id": "eyes_02",
       "category": "eyes",
       "name": "Eyes 2",
@@ -153,6 +158,30 @@
       "category": "top",
       "name": "Tank Top",
       "assetPath": "/assets/items/tops/top_06.png"
+    },
+    {
+      "id": "top_07",
+      "category": "top",
+      "name": "Blouse",
+      "assetPath": "/assets/items/tops/top_07.png"
+    },
+    {
+      "id": "top_08",
+      "category": "top",
+      "name": "Crop Top",
+      "assetPath": "/assets/items/tops/top_08.png"
+    },
+    {
+      "id": "top_09",
+      "category": "top",
+      "name": "T-Shirt",
+      "assetPath": "/assets/items/tops/top_09.png"
+    },
+    {
+      "id": "top_10",
+      "category": "top",
+      "name": "Cardigan",
+      "assetPath": "/assets/items/tops/top_10.png"
     }
 
   ],

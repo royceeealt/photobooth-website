@@ -57,6 +57,8 @@ export default function PolaroidDesign() {
   const stripCount = useSessionStore((s) => s.stripCount);
   const capturedPhotos = useSessionStore((s) => s.capturedPhotos);
   const avatars = useSessionStore((s) => s.avatars);
+  const avatarView = useSessionStore((s) => s.avatarView);
+  const setAvatarView = useSessionStore((s) => s.setAvatarView);
 
   const avatarPlacements = useSessionStore((s) => s.avatarPlacements);
   const addAvatarPlacement = useSessionStore((s) => s.addAvatarPlacement);
@@ -158,7 +160,15 @@ export default function PolaroidDesign() {
     if (!template || !avatarThumbs[avatarPickIndex]) return;
 
     const id = crypto.randomUUID();
-    addAvatarPlacement({ id, avatarIndex: avatarPickIndex, ...nextSpot(), scale: 1 });
+
+    addAvatarPlacement({
+      id,
+      avatarIndex: avatarPickIndex,
+      ...nextSpot(),
+      scale: 1,
+      view: avatarView,
+    });
+
     setSelectedId(id);
   }
 
@@ -457,17 +467,25 @@ export default function PolaroidDesign() {
                     onPointerUp={handlePlacedPointerEnd}
                     onPointerCancel={handlePlacedPointerEnd}
                   >
-                    <img
-                      src={src}
-                      alt=""
-                      draggable={false}
-                      style={{
-                        display: "block",
-                        width: "100%",
-                        height: "100%",
-                        imageRendering: "pixelated",
-                      }}
-                    />
+                    <div
+                      className={
+                        p.view === "half" && kind === "avatar"
+                          ? "design-avatar-crop design-avatar-crop--half"
+                          : "design-avatar-crop"
+                      }
+                    >
+                      <img
+                        src={src}
+                        alt=""
+                        draggable={false}
+                        style={{
+                          display: "block",
+                          width: "100%",
+                          height: "auto",
+                          imageRendering: "pixelated",
+                        }}
+                      />
+                    </div>
                   </div>
                 );
               })}
@@ -537,6 +555,37 @@ export default function PolaroidDesign() {
             RIGHT — CONTROLS
         ========================== */}
         <aside className="photo-editor-controls">
+          <div className="polaroid-view-toggle">
+            <button
+              type="button"
+              className={selectedItem?.kind === "avatar" && selectedItem.p.view === "full" ? "active" : ""}
+              onClick={() => {
+                if (selectedItem?.kind === "avatar") {
+                  updateAvatarPlacement(selectedItem.p.id, {
+                    view: "full",
+                  });
+                }
+              }}
+              disabled={selectedItem?.kind !== "avatar"}
+            >
+              Full View
+            </button>
+
+            <button
+              type="button"
+              className={selectedItem?.kind === "avatar" && selectedItem.p.view === "half" ? "active" : ""}
+              onClick={() => {
+                if (selectedItem?.kind === "avatar") {
+                  updateAvatarPlacement(selectedItem.p.id, {
+                    view: "half",
+                  });
+                }
+              }}
+              disabled={selectedItem?.kind !== "avatar"}
+            >
+              Half View
+            </button>
+          </div>
           <EditorControlRow
             label={selectedDesign?.name || "Blank"}
             onPrev={() => stepDesign(-1)}

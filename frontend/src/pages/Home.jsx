@@ -6,8 +6,10 @@ export default function Home() {
 
   return (
     <main className="home-page">
+
       <div className="home-frame">
         <div className="home-content">
+
           <h1 className="home-title">
             WELCOME
           </h1>
@@ -23,6 +25,7 @@ export default function Home() {
           </p>
 
           <div className="home-buttons">
+
             <button
               type="button"
               onClick={() => navigate("/login")}
@@ -36,9 +39,26 @@ export default function Home() {
             >
               SIGN IN
             </button>
+
           </div>
+
         </div>
       </div>
+
+
+      {/* Guest button outside the frame */}
+      <div className="guest-button-wrapper">
+
+        <button
+          className="guest-button"
+          type="button"
+          onClick={() => navigate("/strip-count")}
+        >
+          CONTINUE AS GUEST
+        </button>
+
+      </div>
+
     </main>
   );
 }

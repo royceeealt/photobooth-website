@@ -476,95 +476,255 @@ body {
 }
 
 /* ================================
-   Strip / Setup page
+   STRIP COUNT PAGE
 ================================ */
 
 .setup-page {
-  width: min(960px, 100%);
-  min-height: 620px;
-
-  background: #ffffff;
-
-  border: 3px solid #222;
-  border-radius: 22px;
-
-  padding: 60px;
+  width: 100%;
+  min-height: 100vh;
 
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
+
+  background: transparent;
+
+  padding: 30px;
+
+  box-sizing: border-box;
 }
 
 
-/* Each question */
+/* ================================
+   PIXEL FRAME
+================================ */
 
-.setup-field {
-  width: min(420px, 100%);
+.setup-frame {
+  position: relative;
+
+  width: 2000px;
+  height: 900px;
+  transform: translateY(-50px);
+
+  background-image: url("/assets/home/frame-bg-frame0.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+
+  image-rendering: pixelated;
+}
+
+
+/* ================================
+   CONTENT INSIDE FRAME
+================================ */
+
+.setup-content {
+  position: absolute;
+
+  top: 50%;
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 520px; /* fixed size — won't grow with frame */
 
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
 
-  margin-bottom: 42px;
+  font-family: "Handjet", sans-serif;
 }
 
-.setup-field label {
+
+/* ================================
+   QUESTION BLOCK
+================================ */
+
+.setup-field {
   width: 100%;
 
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-  padding: 10px 12px;
-
-  border: 2px solid #222;
-  border-radius: 7px;
-
-  font-size: 13px;
-  font-weight: 500;
+  margin-bottom: 32px;
 }
 
 
-/* Dropdown */
+/* ================================
+   QUESTION
+================================ */
+
+.setup-field label {
+  position: relative;
+
+  width: 100%;
+
+  box-sizing: border-box;
+
+  margin-bottom: 14px;
+
+  padding: 12px 16px;
+
+  border: 4px solid #8f8f8f;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Handjet", sans-serif;
+
+  font-size: 22px;
+  font-weight: 400;
+
+  text-align: center;
+
+  image-rendering: pixelated;
+}
+
+
+/* Pixel corners */
+
+.setup-field label::before,
+.setup-field label::after {
+  content: "";
+
+  position: absolute;
+
+  top: -7px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #8f8f8f;
+
+  box-shadow: 0 49px 0 #8f8f8f;
+}
+
+.setup-field label::before {
+  left: -7px;
+}
+
+.setup-field label::after {
+  right: -7px;
+}
+
+
+/* ================================
+   SELECT
+================================ */
 
 .setup-field select {
-  min-width: 78px;
+  width: 150px;
+  height: 48px;
 
-  padding: 8px 11px;
+  padding: 4px 12px;
 
-  border: 2px solid #222;
-  border-radius: 7px;
+  border: 4px solid #8f8f8f;
+  border-radius: 0;
 
-  background: white;
+  background: #eeeeee;
+  color: #20204f;
 
-  font-family: inherit;
-  font-size: 12px;
+  font-family: "Handjet", sans-serif;
+
+  font-size: 21px;
 
   cursor: pointer;
+
+  image-rendering: pixelated;
+
+  outline: none;
+}
+
+.setup-field select:hover {
+  box-shadow: 5px 5px 0 #777777;
+}
+
+.setup-field select:focus {
+  outline: none;
+
+  box-shadow: 5px 5px 0 #777777;
 }
 
 
-/* Confirm button */
+/* ================================
+   CONFIRM
+================================ */
 
 .setup-confirm {
-  padding: 10px 16px;
+  position: relative;
 
-  background: #222;
-  color: white;
+  min-width: 130px;
+  height: 52px;
 
-  border: 2px solid #222;
-  border-radius: 6px;
+  padding: 0 20px;
 
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
+  border: 4px solid #8f8f8f;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Handjet", sans-serif;
+
+  font-size: 22px;
 
   cursor: pointer;
+
+  image-rendering: pixelated;
+
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
 }
 
-.setup-confirm:hover:not(:disabled) {
-  background: white;
-  color: #222;
+
+/* Pixel corners */
+
+.setup-confirm::before,
+.setup-confirm::after {
+  content: "";
+
+  position: absolute;
+
+  top: -7px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #8f8f8f;
+
+  box-shadow: 0 51px 0 #8f8f8f;
 }
+
+.setup-confirm::before {
+  left: -7px;
+}
+
+.setup-confirm::after {
+  right: -7px;
+}
+
+
+/* Hover */
+
+.setup-confirm:hover:not(:disabled) {
+  box-shadow: 6px 6px 0 #777777;
+}
+
+
+/* Press */
+
+.setup-confirm:active:not(:disabled) {
+  transform: translate(3px, 3px);
+
+  box-shadow: 3px 3px 0 #777777;
+}
+
+
+/* Disabled */
 
 .setup-confirm:disabled {
   opacity: 0.45;
@@ -572,17 +732,35 @@ body {
 }
 
 
-/* Mobile */
+/* ================================
+   MOBILE
+================================ */
 
-@media (max-width: 600px) {
-  .setup-page {
-    padding: 35px 20px;
+@media (max-width: 700px) {
+
+  .setup-frame {
+    width: 95vw;
+    height: 650px;
   }
 
-  .setup-field {
-    margin-bottom: 30px;
+  .setup-content {
+    width: 70%;
+  }
+
+  .setup-field label {
+    font-size: 17px;
+  }
+
+  .setup-field select {
+    width: 130px;
+    font-size: 18px;
+  }
+
+  .setup-confirm {
+    font-size: 19px;
   }
 }
+
 
 /* ========================================
    Avatar Design
@@ -1229,11 +1407,14 @@ body {
 }
 
 .character-preview--half {
-  /* Shoulder up */
+  overflow: hidden;
+  align-items: flex-start;
+  height: 150px;
 }
 
 .character-preview--half .character-stage {
-  transform: scale(2.7);
+  transform: scale(2);
+  transform-origin: top center;
 }
 
 
@@ -1505,7 +1686,7 @@ body {
 
   padding: 50px;
 
-  background: #fff;
+  background: transparent;
 }
 
 .photo-editor-workspace {
@@ -1751,7 +1932,11 @@ body {
   overflow: hidden;
 }
 
-/* Cloud + stars background */
+
+/* =========================
+   Cloud + stars background
+========================= */
+
 .home-background {
   position: absolute;
   top: 0;
@@ -1759,7 +1944,6 @@ body {
 
   width: 100vw;
   height: calc(100vw * 0.711111);
-
   min-height: 100vh;
 
   transform: translateX(-50%);
@@ -1775,6 +1959,10 @@ body {
 }
 
 
+/* =========================
+   Main pixel frame
+========================= */
+
 .home-frame {
   position: absolute;
 
@@ -1783,6 +1971,7 @@ body {
 
   width: 100vw;
   max-width: 1100px;
+
   aspect-ratio: 1440 / 1024;
   height: auto;
 
@@ -1794,11 +1983,15 @@ body {
   background-size: 100% 100%;
 
   image-rendering: pixelated;
+
   pointer-events: none;
 }
 
 
-/* Everything inside the frame */
+/* =========================
+   Everything inside frame
+========================= */
+
 .home-content {
   position: absolute;
 
@@ -1829,6 +2022,7 @@ body {
   margin: 0 0 38px;
 
   font-family: "Handjet", sans-serif;
+
   font-size: 72px;
   font-weight: 700;
 
@@ -1840,6 +2034,7 @@ body {
   letter-spacing: 0;
 
   color: #ffffff;
+
   text-shadow: none;
 }
 
@@ -1848,6 +2043,7 @@ body {
   margin: 0 0 22px;
 
   font-family: "Handjet", sans-serif;
+
   font-size: 32px;
   line-height: 1.2;
 
@@ -1856,10 +2052,12 @@ body {
   color: #ffffff !important;
 }
 
+
 .home-description {
   margin: 0;
 
   font-family: "Handjet", sans-serif;
+
   font-size: 27px;
   line-height: 1.6;
 
@@ -1868,12 +2066,14 @@ body {
   color: #ffffff;
 }
 
+
 /* =========================
-   BUTTONS
+   LOGIN + SIGN IN
 ========================= */
 
 .home-buttons {
   display: flex;
+
   justify-content: center;
   align-items: center;
 
@@ -1881,6 +2081,7 @@ body {
 
   margin-top: 45px;
 }
+
 
 .home-buttons button {
   position: relative;
@@ -1897,6 +2098,7 @@ body {
   color: #20204f;
 
   font-family: "Handjet", sans-serif;
+
   font-size: 24px;
   font-weight: 400;
 
@@ -1910,14 +2112,14 @@ body {
 }
 
 
-/* Pixel corner effect — all 4 corners.
-   Each pseudo-element places one corner chip normally, then uses
-   box-shadow to stamp a duplicate 57px lower (button height + 2px)
-   to cover the matching bottom corner, without needing extra elements.
-   If you resize the buttons again, update that 57px to (height + 2). */
+/* =========================
+   Pixel corners
+========================= */
 
 .home-buttons button::before,
-.home-buttons button::after {
+.home-buttons button::after,
+.guest-button::before,
+.guest-button::after {
   content: "";
 
   position: absolute;
@@ -1932,47 +2134,109 @@ body {
   box-shadow: 0 57px 0 0 #8f8f8f;
 }
 
-.home-buttons button::before {
+
+.home-buttons button::before,
+.guest-button::before {
   left: -7px;
 }
 
-.home-buttons button::after {
+
+.home-buttons button::after,
+.guest-button::after {
   right: -7px;
 }
 
 
-/* Hover: flat by default, shadow appears on hover */
+/* =========================
+   Hover
+========================= */
 
-.home-buttons button:hover {
-  box-shadow:
-    6px 6px 0 #777777;
+.home-buttons button:hover,
+.guest-button:hover {
+  box-shadow: 6px 6px 0 #777777;
 }
 
 
-/* Press */
+/* =========================
+   Press
+========================= */
 
-.home-buttons button:active {
+.home-buttons button:active,
+.guest-button:active {
   transform: translate(3px, 3px);
 
-  box-shadow:
-    3px 3px 0 #777777;
+  box-shadow: 3px 3px 0 #777777;
 }
+
+
+/* =========================
+   CONTINUE AS GUEST
+========================= */
+
+.guest-button-wrapper {
+  position: absolute;
+
+  left: 50%;
+
+  /* Adjust this number if you want
+     the button closer/further from frame */
+  top: calc(50% + 360px);
+
+  transform: translateX(-50%);
+
+  z-index: 10;
+}
+
+
+.guest-button {
+  position: relative;
+
+  width: 190px;
+  height: 55px;
+
+  padding: 0;
+
+  border: 4px solid #8f8f8f;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Handjet", sans-serif;
+
+  font-size: 22px;
+  font-weight: 400;
+
+  cursor: pointer;
+
+  image-rendering: pixelated;
+
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
+
 /* =========================
    MOBILE
 ========================= */
 
 @media (max-width: 800px) {
+
   .home-background {
     background-size: auto 100%;
   }
 
+
   .home-frame {
     width: 100vw;
     height: auto;
+
     aspect-ratio: 1440 / 1024;
 
     background-size: 100% 100%;
   }
+
 
   .home-content {
     width: 90%;
@@ -1981,26 +2245,36 @@ body {
     top: 52%;
   }
 
+
   .home-title {
     font-size: 38px;
+
     letter-spacing: 0;
+
     margin-bottom: 35px;
   }
 
+
   .home-subtitle {
     font-size: 22px;
+
     margin-bottom: 20px;
   }
 
+
   .home-description {
     font-size: 16px;
+
     line-height: 1.6;
   }
 
+
   .home-buttons {
     gap: 25px;
+
     margin-top: 45px;
   }
+
 
   .home-buttons button {
     width: 135px;
@@ -2009,8 +2283,28 @@ body {
     font-size: 17px;
   }
 
+
   .home-buttons button::before,
   .home-buttons button::after {
+    box-shadow: 0 60px 0 0 #8f8f8f;
+  }
+
+
+  .guest-button-wrapper {
+    top: calc(50% + 300px);
+  }
+
+
+  .guest-button {
+    width: 180px;
+    height: 58px;
+
+    font-size: 18px;
+  }
+
+
+  .guest-button::before,
+  .guest-button::after {
     box-shadow: 0 60px 0 0 #8f8f8f;
   }
 }
@@ -2022,6 +2316,7 @@ body {
 .capture-page {
   align-items: flex-start;
   padding-top: 40px;
+  background: transparent;
 }
 
 
@@ -2031,10 +2326,10 @@ body {
   width: min(1180px, 100%);
   min-height: 720px;
 
-  background: #ffffff;
+  background: transparent;
 
-  border: 3px solid #222;
-  border-radius: 22px;
+  border: none;
+  border-radius: 0;
 
   padding: 45px;
 
@@ -2102,21 +2397,68 @@ body {
 /* Shoot button */
 
 .capture-shoot-button {
-  margin-top: 20px;
+  min-width: 150px;
+  height: 58px;
 
-  padding: 11px 22px;
+  padding: 0 22px;
 
-  border: 2px solid #222;
-  border-radius: 7px;
+  border: 4px solid #8f8f8f;
+  border-radius: 0;
 
-  background: #222;
-  color: white;
+  background: #eeeeee;
+  color: #20204f;
 
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
+  font-family: "Handjet", sans-serif;
+  font-size: 26px;
+  font-weight: 500;
 
   cursor: pointer;
+
+  position: relative;
+
+  box-shadow:
+    5px 0 0 #8f8f8f,
+    -5px 0 0 #8f8f8f;
+
+  transition: transform 0.08s ease;
+}
+
+.capture-shoot-button::before,
+.capture-shoot-button::after {
+  content: "";
+
+  position: absolute;
+
+  top: -7px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #8f8f8f;
+
+  box-shadow: 0 58px 0 #8f8f8f;
+}
+
+.capture-shoot-button::before {
+  left: -7px;
+}
+
+.capture-shoot-button::after {
+  right: -7px;
+}
+
+.capture-shoot-button:hover {
+  background: #ffffff;
+  transform: translate(2px, 2px);
+}
+
+.capture-shoot-button:active {
+  transform: translate(4px, 4px);
+}
+
+.capture-shoot-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .capture-shoot-button:hover {
@@ -2285,6 +2627,26 @@ body {
   outline: 3px solid #222;
 }
 
+/* ========================================
+   CAMERA / PHOTO BOOTH PIXEL STYLING
+======================================== */
+
+.image-capture-page,
+.capture-page {
+  font-family: "Handjet", sans-serif;
+  color: #20204f;
+}
+
+.capture-camera-label,
+.capture-right__title {
+  font-family: "Handjet", sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  color: #ffffff;
+
+  text-transform: lowercase;
+}
+
 /* Touch screens have no hover: keep the button visible. */
 @media (hover: none) {
   .strip-preview__retake {
@@ -2295,26 +2657,70 @@ body {
 }
 
 .capture-continue-button {
-  margin-top: 25px;
+  margin-top: 24px;
 
-  padding: 10px 14px;
+  min-width: 190px;
+  height: 58px;
 
-  border: 2px solid #222;
-  border-radius: 6px;
+  padding: 0 20px;
 
-  background: #222;
-  color: white;
+  border: 4px solid #8f8f8f;
+  border-radius: 0;
 
-  font-family: inherit;
-  font-size: 12px;
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Handjet", sans-serif;
+  font-size: 24px;
+  font-weight: 500;
 
   cursor: pointer;
+
+  position: relative;
+
+  box-shadow:
+    5px 0 0 #8f8f8f,
+    -5px 0 0 #8f8f8f;
+
+  transition: transform 0.08s ease;
 }
 
+.capture-continue-button::before,
+.capture-continue-button::after {
+  content: "";
+
+  position: absolute;
+
+  top: -7px;
+
+  width: 12px;
+  height: 12px;
+
+  background: #8f8f8f;
+
+  box-shadow: 0 58px 0 #8f8f8f;
+}
+
+.capture-continue-button::before {
+  left: -7px;
+}
+
+.capture-continue-button::after {
+  right: -7px;
+}
 
 .capture-continue-button:hover {
-  background: white;
-  color: #222;
+  background: #ffffff;
+  transform: translate(2px, 2px);
+}
+
+.capture-continue-button:active {
+  transform: translate(4px, 4px);
+}
+
+.capture-continue-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 
@@ -2734,14 +3140,16 @@ body {
 ======================================== */
 
 .design-page {
+  min-height: 100vh;
   align-items: flex-start;
   padding-top: 40px;
+  background: transparent !important;
 }
 
 .polaroid-design-page {
   width: min(1100px, 100%);
 
-  background: #ffffff;
+  background: transparent;
 
   border: 3px solid #222;
   border-radius: 22px;
@@ -3051,6 +3459,8 @@ button.design-row__thumb:hover {
 
   text-transform: lowercase;
   text-align: center;
+  color: white;
+
 }
 
 .editor-control-display:disabled {
@@ -3078,4 +3488,80 @@ button.design-row__thumb:hover {
 .design-handles-layer .design-placed__remove,
 .design-handles-layer .design-placed__resize {
   pointer-events: auto;
+}
+
+/* ========================================
+   Polaroid Avatar Full / Half View
+======================================== */
+
+.polaroid-view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.polaroid-view-toggle button {
+  min-width: 120px;
+  height: 48px;
+
+  padding: 0 14px;
+
+  border: 3px solid #222;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Pixelify Sans", "Courier New", monospace;
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow: 4px 4px 0 #777777;
+
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
+.polaroid-view-toggle button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #777777;
+}
+
+.polaroid-view-toggle button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #777777;
+}
+
+.polaroid-view-toggle button.active {
+  background: #222;
+  color: #fff;
+
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #777777;
+}
+
+
+/* Avatar crop */
+
+.design-avatar-crop {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.design-avatar-crop--half {
+  width: 100%;
+  height: 58%;
+  overflow: hidden;
+}
+
+.design-avatar-crop--half img {
+  width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
 }

@@ -27,10 +27,7 @@ export default function ItemPicker({
 
   const allItems = catalog[category] || [];
 
-  const items =
-    avatarView === "half"
-      ? allItems.filter((item) => item.halfAssetPath)
-      : allItems;
+  const items = catalog[category] || [];
 
   const visibleItems = items.slice(
     startIndex,
@@ -77,11 +74,7 @@ export default function ItemPicker({
                 }
               >
                 <img
-                  src={
-                    avatarView === "half"
-                      ? item.halfAssetPath
-                      : item.assetPath
-                  }
+                  src={item.assetPath}
                   alt={item.name}
                 />
 
