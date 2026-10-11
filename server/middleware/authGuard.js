@@ -1,19 +1,16 @@
-import { verifyToken } from "../services/auth.service.js";
+const jwt = require('jsonwebtoken');
 
-// Protects routes that require a logged-in user. Expects "Authorization: Bearer <token>".
-export default function authGuard(req, res, next) {
-  const header = req.headers.authorization;
-  const token = header?.startsWith("Bearer ") ? header.slice(7) : null;
-
-  if (!token) {
-    return res.status(401).json({ message: "Missing auth token" });
-  }
+function authGuard(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token provided' });
 
   try {
-    const payload = verifyToken(token);
-    req.user = payload; // { id, email, ... }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
     next();
-  } catch (err) {
-    return res.status(401).json({ message: "Invalid or expired token" });
+  } catch {
+    res.status(401).json({ error: 'Invalid or expired token' });
   }
 }
+
+module.exports = authGuard;

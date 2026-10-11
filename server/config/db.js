@@ -1,12 +1,8 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-export async function connectDB() {
-  const uri = process.env.MONGO_URI || "mongodb://localhost:27017/pixel-photobooth";
-  try {
-    await mongoose.connect(uri);
-    console.log("MongoDB connected");
-  } catch (err) {
-    console.error("MongoDB connection error:", err);
-    process.exit(1);
-  }
+async function connectDB() {
+  await mongoose.connect(process.env.MONGO_URI);
+  console.log('MongoDB connected');
 }
+
+module.exports = connectDB;
