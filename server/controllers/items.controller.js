@@ -1,17 +1,11 @@
-import Item from "../models/Item.js";
+const Item = require('../models/Item');
+const asyncHandler = require('../middleware/asyncHandler');
 
-// Only needed if items are served from the DB rather than the static
-// public/assets/items/itemManifest.json.
-export async function getItems(req, res, next) {
-  try {
-    const items = await Item.find();
-    const grouped = items.reduce((acc, item) => {
-      acc[item.category] = acc[item.category] || [];
-      acc[item.category].push(item);
-      return acc;
-    }, {});
-    res.json(grouped);
-  } catch (err) {
-    next(err);
-  }
-}
+const getItems = asyncHandler(async (req, res) => {
+  const { category } = req.query;
+  const filter = category ? { category } : {};
+  const items = await Item.find(filter).sort('sortOrder');
+  res.json(items);
+});
+
+module.exports = { getItems };

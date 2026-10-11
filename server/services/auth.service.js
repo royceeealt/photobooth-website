@@ -1,24 +1,16 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
-const JWT_EXPIRES_IN = "7d";
-const SALT_ROUNDS = 10;
-
-export async function hashPassword(plainPassword) {
-  return bcrypt.hash(plainPassword, SALT_ROUNDS);
+async function hashPassword(plain) {
+  return bcrypt.hash(plain, 10);
 }
 
-export async function comparePassword(plainPassword, passwordHash) {
-  return bcrypt.compare(plainPassword, passwordHash);
+async function comparePassword(plain, hash) {
+  return bcrypt.compare(plain, hash);
 }
 
-export function generateToken(user) {
-  return jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
-  });
+function generateToken(userId) {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
 }
 
-export function verifyToken(token) {
-  return jwt.verify(token, JWT_SECRET);
-}
+module.exports = { hashPassword, comparePassword, generateToken };

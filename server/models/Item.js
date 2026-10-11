@@ -1,13 +1,14 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-// Only needed if items are DB-backed instead of the static itemManifest.json.
-const itemSchema = new mongoose.Schema(
-  {
-    category: { type: String, enum: ["hair", "skinTone", "accessory"], required: true },
-    name: { type: String, required: true },
-    assetPath: { type: String, required: true }, // e.g. /assets/items/hair/hair_01.png
+const itemSchema = new mongoose.Schema({
+  category: {
+    type: String,
+    enum: ['bodyType', 'eyes', 'lips', 'top', 'bottom', 'dresses', 'footwear', 'accessories'],
+    required: true,
   },
-  { timestamps: true }
-);
+  name: { type: String, required: true },
+  assetUrl: { type: String, required: true },
+  sortOrder: { type: Number, default: 0 },
+});
 
-export default mongoose.model("Item", itemSchema);
+module.exports = mongoose.model('Item', itemSchema);
