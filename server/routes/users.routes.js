@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const authGuard = require('../middleware/authGuard');
-const { saveAvatarConfig, getAvatarConfig } = require('../controllers/users.controller');
-const { avatarConfigValidation } = require('../validators/avatar.validators');
 const validate = require('../middleware/validate');
+const { saveAvatars, getAvatars } = require('../controllers/users.controller');
+const { avatarsValidation } = require('../validators/avatar.validators');
 
-router.get('/avatar', authGuard, getAvatarConfig);
-router.put('/avatar', authGuard, avatarConfigValidation, validate, saveAvatarConfig);
+router.get('/avatars', authGuard, getAvatars);
+router.put('/avatars', authGuard, avatarsValidation, validate, saveAvatars);
 
 module.exports = router;

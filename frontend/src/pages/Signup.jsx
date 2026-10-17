@@ -13,13 +13,11 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
   const [passwordError, setPasswordError] = useState("");
 
   async function handleSubmit(event) {
     event.preventDefault();
 
-    // Check that both password fields match.
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match.");
       return;
@@ -28,18 +26,10 @@ export default function Signup() {
     setPasswordError("");
 
     try {
-      /*
-       * Person A's current auth store expects:
-       * signup(username, email, password)
-       *
-       * For now we pass fullName as the username.
-       * We can change this once A confirms the backend contract.
-       */
       await signup(fullName, email, password);
-
       navigate("/strip-count");
     } catch {
-      // The auth store already contains the server error.
+      // The auth store displays the server error.
     }
   }
 

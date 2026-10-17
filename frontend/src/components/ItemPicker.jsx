@@ -74,7 +74,7 @@ export default function ItemPicker({
                 }
               >
                 <img
-                  src={item.assetPath}
+                  src={item.assetUrl}
                   alt={item.name}
                 />
 

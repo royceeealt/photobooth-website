@@ -19,7 +19,7 @@ export default function Login() {
       await login(email, password);
       navigate("/strip-count");
     } catch {
-      // The auth store already contains the error.
+      // The auth store displays the error.
     }
   }
 

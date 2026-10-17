@@ -11,39 +11,31 @@ import CharacterPreview from "../components/character/CharacterPreview.jsx";
 
 
 const categories = [
-  {
-    id: "hair",
-    label: "Hair",
-  },
-  {
-    id: "eyes",
-    label: "Eyes",
-  },
-  {
-    id: "lips",
-    label: "Lips",
-  },
-  {
-    id: "top",
-    label: "Top",
-  },
-  {
-    id: "bottom",
-    label: "Bottom",
-  },
-  {
-    id: "footwear",
-    label: "Shoes",
-  },
-  {
-    id: "skinTone",
-    label: "Skin Tone",
-  },
-  {
-    id: "accessory",
-    label: "Accessories",
-  },
+  { id: "hair", label: "Hair" },
+  { id: "eyes", label: "Eyes" },
+  { id: "lips", label: "Lips" },
+  { id: "top", label: "Top" },          // Must be "top" (matches MongoDB)
+  { id: "bottom", label: "Bottom" },    // Must be "bottom" (matches MongoDB)
+  { id: "footwear", label: "Shoes" },
+  { id: "skinTone", label: "Skin Tone" },
+  { id: "accessories", label: "Accessories" }, // Must be "accessories" (plural, matches MongoDB)
 ];
+
+// Numeric item ids used by Randomize. These come from the asset filenames
+// (hair_01 -> 1, top_03 -> 3 ...). null means "nothing selected".
+const RANDOM_POOLS = {
+  hair: [1, 2, 3, 4, 5, 6, 7],
+  eyes: [1, 2],
+  top: [1, 2, 3, 4, 5, 6, 7],
+  bottom: [1, 2, 3, 4, 5, 6],
+  footwear: [1, 2],
+  accessories: [null, 1, 2, 3, 4],
+};
+
+const RANDOM_SKIN_COLORS = ["#F1C6A5", "#D99A78", "#B97856", "#8D5A3B"];
+const RANDOM_HAIR_COLORS = ["#222222", "#5B321F", "#8B5A2B", "#D4A72C"];
+
+const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
 export default function AvatarDesign() {
   const navigate = useNavigate();
@@ -64,8 +56,6 @@ export default function AvatarDesign() {
     const skipAvatars = useSessionStore((s) => s.skipAvatars);
 
   const [categoryIndex, setCategoryIndex] = useState(0);
-  const [skinColor, setSkinColor] = useState("#D99A78");
-  const [hairColor, setHairColor] = useState("#222222");
   const [showDrawingTools, setShowDrawingTools] = useState(false);
 
   const currentCategory = categories[categoryIndex];
@@ -85,18 +75,6 @@ export default function AvatarDesign() {
   function handleItemSelect(category, itemId) {
     setAvatarItem(category, itemId);
 
-    if (category === "skinTone") {
-      const skinColors = {
-        skin_01: "#F1C6A5",
-        skin_02: "#8D5A3B",
-      };
-
-      setAvatarColor(
-        "skinColor",
-        skinColors[itemId] || "#B97856"
-      );
-    }
-
     if (category === "top") {
       setAvatarColor("topColor", "#B0B0B0");
     }
@@ -107,24 +85,12 @@ export default function AvatarDesign() {
   }
 
   function handleRandomize() {
-    const randomHair = ["hair_01", "hair_02"];
-    const randomSkin = ["skin_01", "skin_02"];
-    const randomAccessory = ["acc_01", "acc_02"];
-
-    setAvatarItem(
-      "hair",
-      randomHair[Math.floor(Math.random() * randomHair.length)]
+    Object.entries(RANDOM_POOLS).forEach(([category, ids]) =>
+      setAvatarItem(category, pick(ids))
     );
 
-    setAvatarItem(
-      "skinTone",
-      randomSkin[Math.floor(Math.random() * randomSkin.length)]
-    );
-
-    setAvatarItem(
-      "accessory",
-      randomAccessory[Math.floor(Math.random() * randomAccessory.length)]
-    );
+    setAvatarColor("skinColor", pick(RANDOM_SKIN_COLORS));
+    setAvatarColor("hairColor", pick(RANDOM_HAIR_COLORS));
   }
 
   function handleReset() {
@@ -172,8 +138,8 @@ export default function AvatarDesign() {
             <CharacterPreview
               avatarConfig={avatarConfig}
               avatarView={avatarView}
-              skinColor={skinColor}
-              hairColor={hairColor}
+              skinColor={avatarConfig.skinColor}
+              hairColor={avatarConfig.hairColor}
             />
 
             {showDrawingTools && (
@@ -622,7 +588,7 @@ export default function AvatarDesign() {
               </div>
             )}
 
-            {currentCategory.id === "accessory" && (
+            {currentCategory.id === "accessories" && (
               <div className="sprite-colour-picker">
                 <span className="sprite-colour-label">
                   Accessory Colour

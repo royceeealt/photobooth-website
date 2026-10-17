@@ -1,17 +1,46 @@
+
 import { api } from "./api.js";
 
-// Loads the pixel-item catalog. Defaults to the static manifest shipped in
-// public/assets/items/itemManifest.json; swap to the GET /api/items call
-// if items end up living in the DB instead.
-const USE_STATIC_MANIFEST = true;
-
 export async function loadItemCatalog() {
-  if (USE_STATIC_MANIFEST) {
-    const res = await fetch("/assets/items/itemManifest.json");
-    if (!res.ok) throw new Error("Failed to load item manifest");
-    return res.json(); // { hair: [...], skinTone: [...], accessory: [...] }
+  const items = await api.get("/items");
+
+  if (!Array.isArray(items)) {
+    throw new Error("Invalid response from GET /api/items");
   }
 
-  // TODO: shape this response the same as the static manifest ({category: [items]})
-  return api.get("/items");
+  // Group database records by their backend category.
+  // Example: { bodyType: [...], hair: [...], accessories: [...] }
+  const catalog = {};
+
+  for (const item of items) {
+    if (
+      !item.category ||
+      item.itemId === undefined ||
+      item.itemId === null ||
+      !item.assetUrl
+    ) {
+      console.warn("Skipping invalid asset record:", item);
+      continue;
+    }
+
+    const category = item.category;
+
+    if (!catalog[category]) {
+      catalog[category] = [];
+    }
+
+    catalog[category].push({
+      id: Number(item.itemId),
+      name: item.name,
+      assetUrl: item.assetUrl,
+      halfAssetUrl: item.halfAssetUrl || null,
+    });
+  }
+
+  // Display items in their intended numeric order.
+  for (const category of Object.keys(catalog)) {
+    catalog[category].sort((a, b) => a.id - b.id);
+  }
+
+  return catalog;
 }

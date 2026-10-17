@@ -1,15 +1,23 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import useAuthStore from "../store/useAuthStore.js";
 
 export default function Home() {
   const navigate = useNavigate();
 
+  const continueAsGuest = useAuthStore(
+    (state) => state.continueAsGuest
+  );
+
+  function handleContinueAsGuest() {
+    continueAsGuest();
+    navigate("/strip-count", { replace: true });
+  }
+
   return (
     <main className="home-page">
-
       <div className="home-frame">
         <div className="home-content">
-
           <h1 className="home-title">
             WELCOME
           </h1>
@@ -25,7 +33,6 @@ export default function Home() {
           </p>
 
           <div className="home-buttons">
-
             <button
               type="button"
               onClick={() => navigate("/login")}
@@ -37,28 +44,22 @@ export default function Home() {
               type="button"
               onClick={() => navigate("/signup")}
             >
-              SIGN IN
+              SIGN UP
             </button>
-
           </div>
+        </div>
 
+        {/* Guest button now scales with the frame */}
+        <div className="guest-button-wrapper">
+          <button
+            className="guest-button"
+            type="button"
+            onClick={handleContinueAsGuest}
+          >
+            CONTINUE AS GUEST
+          </button>
         </div>
       </div>
-
-
-      {/* Guest button outside the frame */}
-      <div className="guest-button-wrapper">
-
-        <button
-          className="guest-button"
-          type="button"
-          onClick={() => navigate("/strip-count")}
-        >
-          CONTINUE AS GUEST
-        </button>
-
-      </div>
-
     </main>
   );
 }

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { loadItemCatalog } from "../../lib/itemCatalog.js";
 import PixelSprite from "./PixelSprite.jsx";
@@ -33,14 +34,27 @@ export default function CharacterPreview({
     avatarConfig.accessoryColor || "#222222";
 
   const isFullBody = avatarView === "full";
-
   const isHalfView = avatarView === "half";
 
-  const getAssetPath = (items, id) => {
+  // Resolve the regular asset URL.
+  // Keep layers aligned using their original full sprites.
+  const getAssetUrl = (items, id) => {
     const item = items?.find((item) => item.id === id);
+    return item?.assetUrl;
+  };
+
+  // Only eyes use a dedicated half-view asset, matching
+  // the rendering behavior from your friend's version.
+  const getEyeAssetUrl = (id) => {
+    const item = catalog?.eyes?.find(
+      (item) => item.id === id
+    );
+
     if (!item) return undefined;
 
-    return item.assetPath;
+    return isHalfView && item.halfAssetUrl
+      ? item.halfAssetUrl
+      : item.assetUrl;
   };
 
   return (
@@ -52,39 +66,30 @@ export default function CharacterPreview({
       }`}
     >
       <div className="character-stage">
-        {/* Temporary skin/face.
-            This will eventually be replaced by the real
-            skin/body sprite from your teammate. */}
-
-        {/* Body sprite */}
-        {avatarConfig.body && catalog && (
+        {/* Body: backend category is bodyType */}
+        {avatarConfig.body != null && catalog && (
           <PixelSprite
-            src={getAssetPath(catalog.body, avatarConfig.body)}
+            src={getAssetUrl(
+              catalog.bodyType,
+              avatarConfig.body
+            )}
             color={skinColor}
             region="skin"
           />
         )}
 
-        {/* Real eye sprite */}
-        {avatarConfig.eyes && catalog && (
+        {/* Eyes: use the half-view sprite only when available */}
+        {avatarConfig.eyes != null && catalog && (
           <PixelSprite
-            src={
-              avatarView === "half"
-                ? catalog.eyes?.find(
-                    (item) => item.id === avatarConfig.eyes
-                  )?.halfAssetPath
-                : catalog.eyes?.find(
-                    (item) => item.id === avatarConfig.eyes
-                  )?.assetPath
-            }
+            src={getEyeAssetUrl(avatarConfig.eyes)}
             color={avatarConfig.eyesColor || "#222222"}
           />
         )}
 
-        {/* Real lips sprite */}
-        {avatarConfig.lips && catalog && (
+        {/* Lips: retain the original full sprite */}
+        {avatarConfig.lips != null && catalog && (
           <PixelSprite
-            src={getAssetPath(
+            src={getAssetUrl(
               catalog.lips,
               avatarConfig.lips
             )}
@@ -92,32 +97,45 @@ export default function CharacterPreview({
           />
         )}
 
-        {/* Real bottom sprite */}
-        {avatarConfig.bottom && catalog && (
+        {/* Bottom clothing */}
+        {avatarConfig.bottom != null && catalog && (
           <PixelSprite
-            src={catalog.bottom?.find(item => item.id === avatarConfig.bottom)?.assetPath}
+            src={getAssetUrl(
+              catalog.bottom,
+              avatarConfig.bottom
+            )}
             color={bottomColor}
           />
         )}
 
-        {avatarConfig.top && catalog && (
+        {/* Top clothing */}
+        {avatarConfig.top != null && catalog && (
           <PixelSprite
-            src={catalog.top?.find(item => item.id === avatarConfig.top)?.assetPath}
+            src={getAssetUrl(
+              catalog.top,
+              avatarConfig.top
+            )}
             color={topColor}
           />
         )}
 
-        {avatarConfig.footwear && catalog && (
+        {/* Footwear */}
+        {avatarConfig.footwear != null && catalog && (
           <PixelSprite
-            src={catalog.footwear?.find(item => item.id === avatarConfig.footwear)?.assetPath}
-            color={avatarConfig.footwearColor || "#222222"}
+            src={getAssetUrl(
+              catalog.footwear,
+              avatarConfig.footwear
+            )}
+            color={
+              avatarConfig.footwearColor || "#222222"
+            }
           />
         )}
 
-        {/* Real hair sprite */}
-        {avatarConfig.hair && catalog && (
+        {/* Hair: retain the original full sprite */}
+        {avatarConfig.hair != null && catalog && (
           <PixelSprite
-            src={getAssetPath(
+            src={getAssetUrl(
               catalog.hair,
               avatarConfig.hair
             )}
@@ -125,15 +143,13 @@ export default function CharacterPreview({
           />
         )}
 
-        {/* Real accessory sprite */}
-        {/* Accessories */}
-        {avatarConfig.accessory && catalog && (
+        {/* Accessories: use the backend's plural field */}
+        {avatarConfig.accessories != null && catalog && (
           <PixelSprite
-            src={
-              catalog.accessory?.find(
-                (item) => item.id === avatarConfig.accessory
-              )?.assetPath
-            }
+            src={getAssetUrl(
+              catalog.accessories,
+              avatarConfig.accessories
+            )}
             color={accessoryColor}
           />
         )}
