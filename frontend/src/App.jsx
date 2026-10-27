@@ -6,6 +6,7 @@ import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 
 import StripCount from "./pages/StripCount.jsx";
+import AvatarSelection from "./pages/AvatarSelection.jsx";
 import AvatarDesign from "./pages/AvatarDesign.jsx";
 import PhotoChoice from "./pages/PhotoChoice.jsx";
 import ImageCapture from "./pages/ImageCapture.jsx";
@@ -28,6 +29,7 @@ export default function App() {
           {/* Only these routes display the logout button */}
           <Route element={<ProtectedRoute />}>
             <Route path="/strip-count" element={<StripCount />} />
+            <Route path="/avatar-selection" element={<AvatarSelection />} />
             <Route path="/avatar-design" element={<AvatarDesign />} />
             <Route path="/photo-choice" element={<PhotoChoice />} />
             <Route path="/capture" element={<ImageCapture />} />

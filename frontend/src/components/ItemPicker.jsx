@@ -70,7 +70,10 @@ export default function ItemPicker({
                     : "item-card"
                 }
                 onClick={() =>
-                  onSelect(category, item.id)
+                  onSelect(
+                    category,
+                    selected[category] === item.id ? null : item.id
+                  )
                 }
               >
                 <img

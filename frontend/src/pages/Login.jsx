@@ -12,6 +12,13 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const continueAsGuest = useAuthStore((s) => s.continueAsGuest);
+
+  function handleContinueAsGuest() {
+    continueAsGuest();
+    navigate("/strip-count", { replace: true });
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
 
@@ -73,8 +80,14 @@ export default function Login() {
         <p className="pixel-auth-switch">
           don't have an account?{" "}
           <Link to="/signup">sign up</Link>
+          {" "}or continue as a{" "}
+          <Link to="/strip-count" onClick={handleContinueAsGuest}>
+            guest
+          </Link>
         </p>
+
       </section>
+      
     </main>
   );
 }

@@ -4,7 +4,7 @@ import useSessionStore from "../store/useSessionStore.js";
 
 export default function StripCount() {
   const navigate = useNavigate();
-
+  const resetSession = useSessionStore((s) => s.resetSession);
   const setAvatarCount = useSessionStore((s) => s.setAvatarCount);
   const setStripCount = useSessionStore((s) => s.setStripCount);
 
@@ -18,10 +18,14 @@ export default function StripCount() {
       return;
     }
 
+    // Clear avatars from the previous session.
+    resetSession();
+
+    // Initialize the new session with the user's choices.
     setAvatarCount(Number(avatarCount));
     setStripCount(Number(layoutSize));
 
-    navigate("/avatar-design");
+    navigate("/avatar-selection");
   }
 
   return (

@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+
+import { api } from "../lib/api.js";
+import useAuthStore from "../store/useAuthStore.js";
+
 import { useNavigate } from "react-router-dom";
 
 import ItemPicker from "../components/ItemPicker.jsx";
@@ -11,13 +15,13 @@ import CharacterPreview from "../components/character/CharacterPreview.jsx";
 
 
 const categories = [
-  { id: "hair", label: "Hair" },
+  { id: "skinTone", label: "Skin Tone" },
   { id: "eyes", label: "Eyes" },
   { id: "lips", label: "Lips" },
+  { id: "hair", label: "Hair" },
   { id: "top", label: "Top" },          // Must be "top" (matches MongoDB)
   { id: "bottom", label: "Bottom" },    // Must be "bottom" (matches MongoDB)
   { id: "footwear", label: "Shoes" },
-  { id: "skinTone", label: "Skin Tone" },
   { id: "accessories", label: "Accessories" }, // Must be "accessories" (plural, matches MongoDB)
 ];
 
@@ -39,6 +43,12 @@ const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
 export default function AvatarDesign() {
   const navigate = useNavigate();
+
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const isGuest = useAuthStore((s) => s.isGuest);
+
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+  const [saveMessage, setSaveMessage] = useState("");
 
   const avatarConfig = useSessionStore((s) => s.avatarConfig);
   const setAvatarItem = useSessionStore((s) => s.setAvatarItem);
@@ -99,26 +109,117 @@ export default function AvatarDesign() {
     setShowDrawingTools(false);
   }
 
-    function handleConfirm() {
-    // Copy the avatar being edited into avatars[].
-    saveCurrentAvatar();
 
-    // More avatars to create? Load the next slot and stay on this page.
-    if (activeAvatarIndex < avatarCount - 1) {
-      setActiveAvatar(activeAvatarIndex + 1);
-      setAvatarView("full");
-      setCategoryIndex(0);
-      setShowDrawingTools(false);
+  async function handleSaveAvatar() {
+    setSaveMessage("");
+
+    if (isGuest || !isAuthenticated) {
+      const wantsToLogin = window.confirm(
+        "You need an account to save avatars permanently. Go to login?"
+      );
+
+      if (wantsToLogin) {
+        navigate("/login");
+      }
       return;
     }
 
-        navigate("/photo-choice");
+    try {
+      setIsSavingAvatar(true);
+
+      // Load the user's permanent avatar library.
+      const result = await api.get("/users/avatars");
+      const savedAvatars = (result.avatars || []).slice(0, 5);
+
+      let nextAvatars = [...savedAvatars];
+
+      if (nextAvatars.length < 5) {
+        // Add the new avatar to the first available slot.
+        nextAvatars.push({ ...avatarConfig });
+      } else {
+        // All five slots are occupied: ask which one to replace.
+        const choice = window.prompt(
+          "All 5 avatar slots are full.\n" +
+          "Enter a slot number from 1 to 5 to replace, or Cancel to keep them all."
+        );
+
+        if (choice === null) return;
+
+        const slotNumber = Number(choice);
+
+        if (
+          !Number.isInteger(slotNumber) ||
+          slotNumber < 1 ||
+          slotNumber > 5
+        ) {
+          window.alert("Please enter a number from 1 to 5.");
+          return;
+        }
+
+        const confirmed = window.confirm(
+          `Replace saved avatar ${slotNumber} with your current design?`
+        );
+
+        if (!confirmed) return;
+
+        nextAvatars[slotNumber - 1] = { ...avatarConfig };
+      }
+
+      // The backend replaces the array, so send the full updated library.
+      const response = await api.put("/users/avatars", {
+        avatars: nextAvatars,
+      });
+
+      setSaveMessage("Avatar saved to your account!");
+
+      // Keep the message visible; the library will reload when you revisit selection.
+      console.log("Saved avatar library:", response.avatars);
+    } catch (error) {
+      setSaveMessage(error.message || "Could not save avatar.");
+    } finally {
+      setIsSavingAvatar(false);
+    }
   }
 
-    function handleSkip() {
+
+  
+  
+  function handleConfirm() {
+    saveCurrentAvatar();
+
+    const currentState = useSessionStore.getState();
+    const ready = currentState.sessionAvatarReady || [];
+
+    const allReady = Array.from(
+      { length: currentState.avatarCount },
+      (_, index) => ready[index] === true ||
+        index === currentState.activeAvatarIndex
+    ).every(Boolean);
+
+    if (allReady) {
+      navigate("/photo-choice");
+      return;
+    }
+
+    const nextIndex = ready.findIndex(
+      (isReady, index) =>
+        !isReady && index !== currentState.activeAvatarIndex
+    );
+
+    if (nextIndex !== -1) {
+      currentState.setActiveAvatar(nextIndex);
+      return;
+    }
+
+    navigate("/photo-choice");
+  }
+
+
+  function handleSkip() {
     skipAvatars();
     navigate("/photo-choice");
   }
+
 
   return (
     <main className="page">
@@ -154,6 +255,13 @@ export default function AvatarDesign() {
           {/* Bottom buttons */}
 
           <div className="avatar-actions">
+            <button
+              type="button"
+              onClick={handleSaveAvatar}
+              disabled={isSavingAvatar}
+            >
+              {isSavingAvatar ? "Saving..." : "Save Avatar ♡"}
+            </button>
 
             <button
               className="primary-action"
@@ -177,6 +285,12 @@ export default function AvatarDesign() {
             </button>
 
           </div>
+
+          {saveMessage && (
+            <p role="status" className="avatar-save-message">
+              {saveMessage}
+            </p>
+          )}
 
         </div>
 

@@ -74,6 +74,8 @@ const useSessionStore = create(
 
       activeAvatarIndex: 0,
 
+      sessionAvatarReady: [],
+
 
       // =========================
       // Currently selected avatar
@@ -164,6 +166,36 @@ const useSessionStore = create(
           };
         }),
 
+              // Start a session using selected saved avatars plus new avatars to create.
+      beginAvatarSession: (selectedSavedAvatars, targetCount) =>
+        set(() => {
+          const selected = selectedSavedAvatars.slice(0, targetCount);
+          const avatars = [
+            ...selected.map((avatar) => ({
+              ...defaultAvatarConfig,
+              ...avatar,
+            })),
+          ];
+
+          while (avatars.length < targetCount) {
+            avatars.push(createDefaultAvatar());
+          }
+
+          const needsCreation = selected.length < targetCount;
+          const activeIndex = needsCreation ? selected.length : 0;
+
+          return {
+            avatarCount: targetCount,
+            avatars,
+            activeAvatarIndex: activeIndex,
+            avatarConfig: { ...avatars[activeIndex] },
+            avatarView: "full",
+            sessionAvatarReady: avatars.map(
+              (_, index) => index < selected.length
+            ),
+          };
+        }),
+
 
       // =========================
       // Avatar selection
@@ -194,16 +226,18 @@ const useSessionStore = create(
 
       saveCurrentAvatar: () =>
         set((state) => {
-          const avatars = [
-            ...state.avatars,
-          ];
+          const avatars = [...state.avatars];
+          const ready = [...(state.sessionAvatarReady || [])];
 
           avatars[state.activeAvatarIndex] = {
             ...state.avatarConfig,
           };
 
+          ready[state.activeAvatarIndex] = true;
+
           return {
             avatars,
+            sessionAvatarReady: ready,
           };
         }),
 
@@ -368,6 +402,8 @@ const useSessionStore = create(
           propPlacements: [],
 
           avatarCount: 1,
+
+          sessionAvatarReady: [],
 
           avatars: [
             createDefaultAvatar(),

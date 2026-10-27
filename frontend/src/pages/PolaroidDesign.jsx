@@ -540,6 +540,7 @@ export default function PolaroidDesign() {
 
           {downloadError && <p>{downloadError}</p>}
 
+          
           <div className="photo-editor-actions">
             <button type="button" onClick={handleDownload} disabled={!canDownload}>
               {downloading ? "Preparing…" : "Download"}
@@ -548,7 +549,22 @@ export default function PolaroidDesign() {
             <button type="button" onClick={handleRedo}>
               Redo
             </button>
+
+            <button
+              type="button"
+              className="create-new-polaroid-button"
+              onClick={() => {
+                setDesignIndex(0);
+                clearAvatarPlacements();
+                clearPropPlacements();
+                setSelectedId(null);
+                navigate("/strip-count");
+              }}
+            >
+              + Create a New One
+            </button>
           </div>
+
         </div>
 
         {/* =========================
