@@ -1,60 +1,122 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/useAuthStore.js";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const signup = useAuthStore((s) => s.signup);
-  const status = useAuthStore((s) => s.status);
-  const error = useAuthStore((s) => s.error);
 
-  const [username, setUsername] = useState("");
+  const signup = useAuthStore((state) => state.signup);
+  const status = useAuthStore((state) => state.status);
+  const error = useAuthStore((state) => state.error);
+
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleSubmit(event) {
+    event.preventDefault();
+
+    if (password !== confirmPassword) {
+      setPasswordError("Passwords do not match.");
+      return;
+    }
+
+    setPasswordError("");
+
     try {
-      await signup(username, email, password);
+      await signup(fullName, email, password);
       navigate("/strip-count");
     } catch {
-      // error already captured in store
+      // The auth store displays the server error.
     }
   }
 
   return (
-    <div className="signup-page">
-      <h1>Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={status === "loading"}>
-          Sign Up
-        </button>
-      </form>
-      <p>
-        Already have an account? <Link to="/login">Log in</Link>
-      </p>
-    </div>
+    <main className="account-screen">
+      <section className="account-form-panel signup-form-panel">
+        <h1 className="account-form-title">
+          create your account
+        </h1>
+
+        <form onSubmit={handleSubmit} className="pixel-auth-form">
+          <div className="pixel-form-field">
+            <label htmlFor="full-name">full name</label>
+
+            <input
+              id="full-name"
+              type="text"
+              value={fullName}
+              onChange={(event) => setFullName(event.target.value)}
+              required
+            />
+          </div>
+
+          <div className="pixel-form-field">
+            <label htmlFor="signup-email">email address</label>
+
+            <input
+              id="signup-email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
+          </div>
+
+          <div className="signup-password-row">
+            <div className="pixel-form-field">
+              <label htmlFor="signup-password">password</label>
+
+              <input
+                id="signup-password"
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                required
+              />
+            </div>
+
+            <div className="pixel-form-field">
+              <label htmlFor="confirm-password">
+                confirm password
+              </label>
+
+              <input
+                id="confirm-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => {
+                  setConfirmPassword(event.target.value);
+                  setPasswordError("");
+                }}
+                required
+              />
+            </div>
+          </div>
+
+          {passwordError && (
+            <p className="pixel-auth-error">
+              {passwordError}
+            </p>
+          )}
+
+          {error && (
+            <p className="pixel-auth-error">
+              {error}
+            </p>
+          )}
+
+          <button
+            className="pixel-auth-button"
+            type="submit"
+            disabled={status === "loading"}
+          >
+            {status === "loading" ? "creating..." : "CONFIRM"}
+          </button>
+        </form>
+      </section>
+    </main>
   );
 }

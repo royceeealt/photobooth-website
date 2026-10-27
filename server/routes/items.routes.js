@@ -1,9 +1,7 @@
-import { Router } from "express";
-import { getItems } from "../controllers/items.controller.js";
+const express = require('express');
+const router = express.Router();
+const { getItems } = require('../controllers/items.controller');
 
-// Only needed if items live in DB, not a static manifest.
-const router = Router();
+router.get('/', getItems); // GET /api/items or /api/items?category=hair
 
-router.get("/", getItems);
-
-export default router;
+module.exports = router;

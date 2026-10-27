@@ -1,26 +1,41 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
-import authRoutes from "./routes/auth.routes.js";
-import itemsRoutes from "./routes/items.routes.js";
-import stripsRoutes from "./routes/strips.routes.js";
-import errorHandler from "./middleware/errorHandler.js";
+require("dotenv").config();
 
-dotenv.config();
+const express = require("express");
+const cors = require("cors");
+
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/auth.routes");
+const itemsRoutes = require("./routes/items.routes");
+const usersRoutes = require("./routes/users.routes");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
-app.use(express.json({ limit: "10mb" })); // strip images as base64 can be large
+app.use(express.json());
 
+app.use("/api/items", itemsRoutes);
+app.use("/api/users", usersRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/items", itemsRoutes); // only if items are DB-backed
-app.use("/api/strips", stripsRoutes); // optional persistence
 
 app.use(errorHandler);
 
-connectDB().then(() => {
-  app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
-});
+async function startServer() {
+  try {
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is missing from server/.env");
+    }
+
+    await connectDB();
+
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Could not start server:", error.message);
+    process.exit(1);
+  }
+}
+
+startServer();

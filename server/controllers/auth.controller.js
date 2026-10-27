@@ -1,60 +1,100 @@
-import User from "../models/User.js";
-import { hashPassword, comparePassword, generateToken } from "../services/auth.service.js";
+const User = require("../models/User");
+const {
+  hashPassword,
+  comparePassword,
+  generateToken,
+} = require("../services/auth.service");
+const AppError = require("../utils/AppError");
+const asyncHandler = require("../middleware/asyncHandler");
 
-export async function signup(req, res, next) {
+function publicUser(user) {
+  return {
+    id: String(user._id),
+    username: user.username,
+    email: user.email,
+  };
+}
+
+const signup = asyncHandler(async (req, res) => {
+  const username = String(req.body.username || "").trim();
+  const email = String(req.body.email || "").trim().toLowerCase();
+  const password = req.body.password;
+
+  const existingUser = await User.findOne({ email }).lean();
+
+  if (existingUser) {
+    throw new AppError("Email already in use", 409);
+  }
+
+  const passwordHash = await hashPassword(password);
+
+  let user;
+
   try {
-    const { username, email, password } = req.body;
-    if (!username || !email || !password) {
-      return res.status(400).json({ message: "username, email and password are required" });
-    }
-
-    const existing = await User.findOne({ $or: [{ email }, { username }] });
-    if (existing) {
-      return res.status(409).json({ message: "User already exists" });
-    }
-
-    const passwordHash = await hashPassword(password);
-    const user = await User.create({ username, email, passwordHash });
-    const token = generateToken(user);
-
-    res.status(201).json({
-      user: { id: user._id, username: user.username, email: user.email },
-      token,
+    user = await User.create({
+      username,
+      email,
+      passwordHash,
     });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function login(req, res, next) {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+  } catch (error) {
+    // Handle duplicate email submissions that happen simultaneously.
+    if (error.code === 11000) {
+      throw new AppError("Email already in use", 409);
     }
 
-    const valid = await comparePassword(password, user.passwordHash);
-    if (!valid) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    const token = generateToken(user);
-    res.json({
-      user: { id: user._id, username: user.username, email: user.email },
-      token,
-    });
-  } catch (err) {
-    next(err);
+    throw error;
   }
-}
 
-export async function me(req, res, next) {
-  try {
-    const user = await User.findById(req.user.id).select("-passwordHash");
-    if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ user });
-  } catch (err) {
-    next(err);
+  const token = generateToken(user._id);
+
+  res.status(201).json({
+    user: publicUser(user),
+    token,
+  });
+});
+
+const login = asyncHandler(async (req, res) => {
+  const email = String(req.body.email || "").trim().toLowerCase();
+  const password = req.body.password;
+
+  // passwordHash is excluded by default in the User schema.
+  const user = await User.findOne({ email }).select("+passwordHash");
+
+  if (!user) {
+    throw new AppError("Invalid email or password", 401);
   }
-}
+
+  const passwordMatches = await comparePassword(
+    password,
+    user.passwordHash
+  );
+
+  if (!passwordMatches) {
+    throw new AppError("Invalid email or password", 401);
+  }
+
+  const token = generateToken(user._id);
+
+  res.json({
+    user: publicUser(user),
+    token,
+  });
+});
+
+const me = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.userId);
+
+  if (!user) {
+    throw new AppError("User not found", 401);
+  }
+
+  res.json({
+    user: publicUser(user),
+  });
+});
+
+module.exports = {
+  signup,
+  login,
+  me,
+};

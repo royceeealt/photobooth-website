@@ -1,11 +1,23 @@
-import { Router } from "express";
-import { signup, login, me } from "../controllers/auth.controller.js";
-import authGuard from "../middleware/authGuard.js";
+const express = require("express");
 
-const router = Router();
+const router = express.Router();
 
-router.post("/signup", signup);
-router.post("/login", login);
+const {
+  signup,
+  login,
+  me,
+} = require("../controllers/auth.controller");
+
+const {
+  signupValidation,
+  loginValidation,
+} = require("../validators/auth.validators");
+
+const validate = require("../middleware/validate");
+const authGuard = require("../middleware/authGuard");
+
+router.post("/signup", signupValidation, validate, signup);
+router.post("/login", loginValidation, validate, login);
 router.get("/me", authGuard, me);
 
-export default router;
+module.exports = router;

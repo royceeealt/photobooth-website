@@ -1,43 +1,444 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
-// Holds the state of the current photobooth session:
-// how many shots, which avatar items were picked, and the confirmed photos
-// (each with its own placed-avatar position/config).
-const useSessionStore = create((set, get) => ({
-  stripCount: null, // e.g. 3 | 4 | 6
-  avatarConfig: {
-    hair: null,
-    skinTone: null,
-    accessory: null,
-  },
-  capturedPhotos: [], // [{ id, imageDataUrl, avatarPlacement: {x, y, scale} }]
+const defaultAvatarConfig = {
+  body: 0,
 
-  setStripCount: (count) => set({ stripCount: count }),
+  skinTone: null,
 
-  setAvatarItem: (category, itemId) =>
-    set((state) => ({
-      avatarConfig: { ...state.avatarConfig, [category]: itemId },
-    })),
+  hair: null,
 
-  addCapturedPhoto: (photo) =>
-    set((state) => ({ capturedPhotos: [...state.capturedPhotos, photo] })),
+  eyebrows: null,
 
-  retakeLastPhoto: () =>
-    set((state) => ({ capturedPhotos: state.capturedPhotos.slice(0, -1) })),
+  eyes: 1,
 
-  updatePhotoAvatarPlacement: (photoId, placement) =>
-    set((state) => ({
-      capturedPhotos: state.capturedPhotos.map((p) =>
-        p.id === photoId ? { ...p, avatarPlacement: placement } : p
-      ),
-    })),
+  nose: null,
 
-  resetSession: () =>
-    set({
+  lips: 0,
+
+  top: null,
+
+  bottom: null,
+
+  dresses: null,
+
+  footwear: null,
+
+  facialAccessories: null,
+
+  accessories: null,
+
+  // Custom sprite colours
+  skinColor: "#B97856",
+
+  hairColor: "#222222",
+
+  topColor: "#B0B0B0",
+
+  bottomColor: "#B0B0B0",
+
+  lipsColor: "#B05A78",
+
+  footwearColor: "#222222",
+
+  accessoryColor: "#222222",
+
+  eyesColor: "#222222",
+};
+
+
+const createDefaultAvatar = () => ({
+  ...defaultAvatarConfig,
+});
+
+
+const useSessionStore = create(
+  persist(
+    (set) => ({
+      // =========================
+      // Photo strip setup
+      // =========================
+
       stripCount: null,
-      avatarConfig: { hair: null, skinTone: null, accessory: null },
+
+      avatarCount: 1,
+
+
+      // =========================
+      // Multiple saved avatars
+      // =========================
+
+      avatars: [
+        createDefaultAvatar(),
+      ],
+
+      activeAvatarIndex: 0,
+
+      sessionAvatarReady: [],
+
+
+      // =========================
+      // Currently selected avatar
+      // =========================
+
+      avatarView: "full",
+
+      avatarConfig: createDefaultAvatar(),
+
+
+      // =========================
+      // Photos taken during session
+      // =========================
+
       capturedPhotos: [],
+
+
+      // =========================
+      // Strip setup
+      // =========================
+
+      setStripCount: (count) =>
+        set({
+          stripCount: count,
+          avatarPlacements: [],
+          propPlacements: [],
+        }),
+
+
+      setAvatarCount: (count) =>
+        set((state) => {
+          const safeCount = Math.max(
+            1,
+            Math.min(5, Number(count) || 1)
+          );
+
+          const avatars = Array.from(
+            { length: safeCount },
+            (_, index) =>
+              state.avatars?.[index]
+                ? {
+                    ...state.avatars[index],
+                  }
+                : createDefaultAvatar()
+          );
+
+          const activeIndex =
+            Math.min(
+              state.activeAvatarIndex || 0,
+              safeCount - 1
+            );
+
+          return {
+            avatarCount: safeCount,
+            avatars,
+            activeAvatarIndex: activeIndex,
+            avatarConfig: {
+              ...avatars[activeIndex],
+            },
+          };
+        }),
+
+      // Skip avatar creation entirely: no avatars exist for this session.
+      // (setAvatarCount can't represent this — it always keeps a minimum of 1.)
+      skipAvatars: () =>
+        set({
+          avatarCount: 0,
+          avatars: [],
+          activeAvatarIndex: 0,
+          avatarConfig: createDefaultAvatar(),
+        }),
+
+      // Replace the session's avatars with ones loaded from the backend.
+      // Merging with the defaults fills in any keys the server didn't send.
+      loadAvatars: (saved) =>
+        set((state) => {
+          if (!saved?.length) return state;
+
+          const avatars = saved
+            .slice(0, 5)
+            .map((a) => ({ ...defaultAvatarConfig, ...a }));
+
+          return {
+            avatarCount: avatars.length,
+            avatars,
+            activeAvatarIndex: 0,
+            avatarConfig: { ...avatars[0] },
+          };
+        }),
+
+              // Start a session using selected saved avatars plus new avatars to create.
+      beginAvatarSession: (selectedSavedAvatars, targetCount) =>
+        set(() => {
+          const selected = selectedSavedAvatars.slice(0, targetCount);
+          const avatars = [
+            ...selected.map((avatar) => ({
+              ...defaultAvatarConfig,
+              ...avatar,
+            })),
+          ];
+
+          while (avatars.length < targetCount) {
+            avatars.push(createDefaultAvatar());
+          }
+
+          const needsCreation = selected.length < targetCount;
+          const activeIndex = needsCreation ? selected.length : 0;
+
+          return {
+            avatarCount: targetCount,
+            avatars,
+            activeAvatarIndex: activeIndex,
+            avatarConfig: { ...avatars[activeIndex] },
+            avatarView: "full",
+            sessionAvatarReady: avatars.map(
+              (_, index) => index < selected.length
+            ),
+          };
+        }),
+
+
+      // =========================
+      // Avatar selection
+      // =========================
+
+      setActiveAvatar: (index) =>
+        set((state) => {
+          if (
+            index < 0 ||
+            index >= state.avatars.length
+          ) {
+            return state;
+          }
+
+          return {
+            activeAvatarIndex: index,
+
+            avatarConfig: {
+              ...state.avatars[index],
+            },
+          };
+        }),
+
+
+      // =========================
+      // Save current avatar
+      // =========================
+
+      saveCurrentAvatar: () =>
+        set((state) => {
+          const avatars = [...state.avatars];
+          const ready = [...(state.sessionAvatarReady || [])];
+
+          avatars[state.activeAvatarIndex] = {
+            ...state.avatarConfig,
+          };
+
+          ready[state.activeAvatarIndex] = true;
+
+          return {
+            avatars,
+            sessionAvatarReady: ready,
+          };
+        }),
+
+
+      // =========================
+      // Avatar creator
+      // =========================
+
+      setAvatarView: (view) =>
+        set({
+          avatarView: view,
+        }),
+
+
+      setAvatarItem: (category, itemId) =>
+        set((state) => ({
+          avatarConfig: {
+            ...state.avatarConfig,
+            [category]: itemId,
+          },
+        })),
+
+
+      setAvatarColor: (category, color) =>
+        set((state) => ({
+          avatarConfig: {
+            ...state.avatarConfig,
+            [category]: color,
+          },
+        })),
+
+
+      setAvatarDrawing: (drawing) =>
+        set((state) => ({
+          avatarConfig: {
+            ...state.avatarConfig,
+            drawing,
+          },
+        })),
+
+
+      resetAvatar: () =>
+        set({
+          avatarConfig: createDefaultAvatar(),
+          avatarView: "full",
+        }),
+
+
+      // =========================
+      // Captured photos
+      // =========================
+
+      addCapturedPhoto: (photo) =>
+        set((state) => ({
+          capturedPhotos: [
+            ...state.capturedPhotos,
+            photo,
+          ],
+        })),
+
+      // Replace all captured photos at once (used by upload, or to clear them).
+      setCapturedPhotos: (photos) => set({ capturedPhotos: photos }),
+
+
+      // =========================
+      // Polaroid decorations
+      // Positions are the CENTRE point, in Polaroid-canvas pixels (1080 wide).
+      // avatarIndex points into avatars[]; the same avatar can be placed
+      // any number of times.
+      // =========================
+
+      avatarPlacements: [],
+
+      addAvatarPlacement: (placement) =>
+        set((state) => ({
+          avatarPlacements: [...state.avatarPlacements, placement],
+        })),
+
+      updateAvatarPlacement: (id, patch) =>
+        set((state) => ({
+          avatarPlacements: state.avatarPlacements.map((p) =>
+            p.id === id ? { ...p, ...patch } : p
+          ),
+        })),
+
+      removeAvatarPlacement: (id) =>
+        set((state) => ({
+          avatarPlacements: state.avatarPlacements.filter((p) => p.id !== id),
+        })),
+
+      clearAvatarPlacements: () => set({ avatarPlacements: [] }),
+
+      propPlacements: [],
+
+      addPropPlacement: (placement) =>
+        set((state) => ({
+          propPlacements: [...state.propPlacements, placement],
+        })),
+
+      updatePropPlacement: (id, patch) =>
+        set((state) => ({
+          propPlacements: state.propPlacements.map((p) =>
+            p.id === id ? { ...p, ...patch } : p
+          ),
+        })),
+
+      removePropPlacement: (id) =>
+        set((state) => ({
+          propPlacements: state.propPlacements.filter((p) => p.id !== id),
+        })),
+
+      clearPropPlacements: () => set({ propPlacements: [] }),
+
+      replaceCapturedPhoto: (index, photo) =>
+        set((state) => {
+          if (index < 0 || index >= state.capturedPhotos.length) {
+            return state;
+          }
+
+          const capturedPhotos = [...state.capturedPhotos];
+          capturedPhotos[index] = photo;
+
+          return { capturedPhotos };
+        }),
+
+      retakeLastPhoto: () =>
+        set((state) => ({
+          capturedPhotos:
+            state.capturedPhotos.slice(0, -1),
+        })),
+
+
+      updatePhotoAvatarPlacement: (
+        photoId,
+        placement
+      ) =>
+        set((state) => ({
+          capturedPhotos:
+            state.capturedPhotos.map(
+              (photo) =>
+                photo.id === photoId
+                  ? {
+                      ...photo,
+                      avatarPlacement:
+                        placement,
+                    }
+                  : photo
+            ),
+        })),
+
+
+      // =========================
+      // Reset entire session
+      // =========================
+
+      resetSession: () => {
+        sessionStorage.removeItem("pixibooth-session");
+
+        set({
+          stripCount: null,
+          avatarPlacements: [],
+          propPlacements: [],
+
+          avatarCount: 1,
+
+          sessionAvatarReady: [],
+
+          avatars: [
+            createDefaultAvatar(),
+          ],
+
+          activeAvatarIndex: 0,
+
+          avatarView: "full",
+
+          avatarConfig:
+            createDefaultAvatar(),
+
+          capturedPhotos: [],
+        });
+      },
     }),
-}));
+    {
+      name: "pixibooth-session",
+      storage: createJSONStorage(() => sessionStorage),
+
+      // Only persist the small stuff. capturedPhotos is excluded on
+      // purpose — it's too big for sessionStorage and is handled
+      // separately (IndexedDB) in a later step.
+      partialize: (state) => ({
+        stripCount: state.stripCount,
+        avatarCount: state.avatarCount,
+        avatars: state.avatars,
+        activeAvatarIndex: state.activeAvatarIndex,
+        avatarView: state.avatarView,
+        avatarConfig: state.avatarConfig,
+        avatarPlacements: state.avatarPlacements,
+        propPlacements: state.propPlacements,
+      }),
+    }
+  )
+);
 
 export default useSessionStore;

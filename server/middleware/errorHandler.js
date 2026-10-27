@@ -1,9 +1,12 @@
-// Centralized Express error handler — register last, after all routes.
-export default function errorHandler(err, req, res, next) {
-  console.error(err);
+function errorHandler(err, req, res, next) {
+  const statusCode = err.statusCode || 500;
+  const message = err.isOperational ? err.message : 'Something went wrong';
 
-  const status = err.status || 500;
-  const message = err.message || "Internal server error";
+  if (!err.isOperational) {
+    console.error(err); // log unexpected errors fully; don't leak internals to the client
+  }
 
-  res.status(status).json({ message });
+  res.status(statusCode).json({ error: message });
 }
+
+module.exports = errorHandler;

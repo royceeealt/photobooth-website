@@ -1,79 +1,172 @@
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import CameraView from "../components/CameraView.jsx";
 import StripPreview from "../components/StripPreview.jsx";
-import DraggableAvatar from "../components/DraggableAvatar.jsx";
-import RetakeConfirmBar from "../components/RetakeConfirmBar.jsx";
-import { captureFrame, compositeAvatarOntoFrame } from "../lib/canvasUtils.js";
+
+import { captureFrame } from "../lib/canvasUtils.js";
+
 import useSessionStore from "../store/useSessionStore.js";
 
-// Camera on one side, filling strip preview on the other. Each shot gets
-// its own avatar placement before it's confirmed into the strip.
 export default function ImageCapture() {
   const navigate = useNavigate();
+  const location = useLocation();
   const videoRef = useRef(null);
 
   const stripCount = useSessionStore((s) => s.stripCount);
-  const avatarConfig = useSessionStore((s) => s.avatarConfig);
   const capturedPhotos = useSessionStore((s) => s.capturedPhotos);
   const addCapturedPhoto = useSessionStore((s) => s.addCapturedPhoto);
-  const retakeLastPhoto = useSessionStore((s) => s.retakeLastPhoto);
+  const replaceCapturedPhoto = useSessionStore((s) => s.replaceCapturedPhoto);
 
-  const [pendingShot, setPendingShot] = useState(null); // { imageDataUrl }
-  const [placement, setPlacement] = useState({ x: 50, y: 50, scale: 1 });
+  // Index of the photo being retaken, or null when taking a new one.
+  const [retakeIndex, setRetakeIndex] = useState(null);
 
-  const isDone = capturedPhotos.length >= (stripCount || 0);
+  // True once the camera feed is live (Shoot is disabled until then).
+  const [cameraReady, setCameraReady] = useState(false);
 
+  // Make sure we always have a number.
+  const routeStripCount = location.state?.stripCount;
+  const maxPhotos = Number(stripCount ?? routeStripCount) || 0;
+
+  const isDone = maxPhotos > 0 && capturedPhotos.length >= maxPhotos;
+
+  // Coming back from the design page with a 1-photo layout: reopen the
+  // camera so the single photo can be replaced.
+  useEffect(() => {
+    if (maxPhotos === 1 && capturedPhotos.length === 1) {
+      setRetakeIndex(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const showCamera = !isDone || retakeIndex !== null;
+
+  // -------------------------
+  // TAKE PHOTO
+  // -------------------------
   function handleShoot() {
-    const imageDataUrl = captureFrame(videoRef.current);
-    setPendingShot({ imageDataUrl });
-    setPlacement({ x: 50, y: 50, scale: 1 });
-  }
+    // Strip is full and we're not retaking: nothing to do.
+    if (!showCamera) {
+      return;
+    }
 
-  function handleRetake() {
-    setPendingShot(null);
-  }
+    if (!videoRef.current) {
+      console.error("Camera video is not ready.");
+      return;
+    }
 
-  async function handleConfirm() {
-    if (!pendingShot) return;
-    // TODO: bake avatar into the photo before storing, or store placement
-    // separately and composite at export time — pick one approach.
-    const composited = await compositeAvatarOntoFrame(
-      pendingShot.imageDataUrl,
-      avatarConfig,
-      placement
-    );
-    addCapturedPhoto({
+    const photo = {
       id: crypto.randomUUID(),
-      imageDataUrl: composited,
-      avatarPlacement: placement,
-    });
-    setPendingShot(null);
+      imageDataUrl: captureFrame(videoRef.current),
+    };
+
+    if (retakeIndex !== null) {
+      replaceCapturedPhoto(retakeIndex, photo);
+      setRetakeIndex(null);
+    } else {
+      addCapturedPhoto(photo);
+    }
+
+    // 1-photo layout has no preview: go straight to the design page.
+    if (maxPhotos === 1) {
+      navigate("/polaroid-design");
+    }
+  }
+
+  // -------------------------
+  // RETAKE (hover a photo in the preview)
+  // -------------------------
+  function handleStartRetake(index) {
+    setRetakeIndex(index);
+  }
+
+  function handleCancelRetake() {
+    setRetakeIndex(null);
+  }
+
+  // -------------------------
+  // CONTINUE TO DESIGN
+  // -------------------------
+  function handleContinueToDesign() {
+    if (!isDone) {
+      return;
+    }
+
+    navigate("/polaroid-design");
   }
 
   return (
-    <div className="image-capture-page">
-      <div className="image-capture-page__camera">
-        {!pendingShot && <CameraView videoRef={videoRef} />}
-        {pendingShot && (
-          <div style={{ position: "relative" }}>
-            <img src={pendingShot.imageDataUrl} alt="Pending shot" />
-            <DraggableAvatar
-              avatarConfig={avatarConfig}
-              placement={placement}
-              onPlacementChange={setPlacement}
-            />
+    <div className="page capture-page">
+      <main className="image-capture-page">
+        {/* =========================
+            LEFT SIDE — CAMERA
+        ========================== */}
+        <section className="capture-left">
+          <h2 className="capture-camera-label">camera feed</h2>
+
+          <div className="camera-workspace">
+            <div
+              style={{
+                position: "relative",
+                width: "100%",
+                height: "100%",
+              }}
+            >
+              {showCamera && (
+                <CameraView
+                  videoRef={videoRef}
+                  onStatusChange={(s) => setCameraReady(s === "ready")}
+                />
+              )}
+            </div>
           </div>
-        )}
 
-        {!pendingShot && !isDone && <button onClick={handleShoot}>Shoot</button>}
-        {pendingShot && <RetakeConfirmBar onRetake={handleRetake} onConfirm={handleConfirm} />}
-      </div>
+          {/* SHOOT BUTTON */}
+          {showCamera && (
+            <button
+              type="button"
+              className="capture-shoot-button"
+              onClick={handleShoot}
+              disabled={!cameraReady}
+            >
+              📷 Shoot
+            </button>
+          )}
 
-      <div className="image-capture-page__strip">
-        <StripPreview photos={capturedPhotos} stripCount={stripCount} />
-        {isDone && <button onClick={() => navigate("/export")}>Continue to Export</button>}
-      </div>
+          {retakeIndex !== null && (
+            <button
+              type="button"
+              className="capture-shoot-button"
+              onClick={handleCancelRetake}
+            >
+              Cancel retake
+            </button>
+          )}
+        </section>
+
+        {/* =========================
+            RIGHT SIDE — PHOTO STRIP
+        ========================== */}
+        <aside className="capture-right">
+          <h2 className="capture-right__title">Photo Strip</h2>
+
+          <StripPreview
+            photos={capturedPhotos}
+            stripCount={maxPhotos}
+            onRetake={handleStartRetake}
+            retakingIndex={retakeIndex}
+          />
+
+          {isDone && retakeIndex === null && (
+            <button
+              type="button"
+              className="capture-continue-button"
+              onClick={handleContinueToDesign}
+            >
+              Continue to Design
+            </button>
+          )}
+        </aside>
+      </main>
     </div>
   );
 }
