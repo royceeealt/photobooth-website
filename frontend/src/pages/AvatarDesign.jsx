@@ -33,11 +33,72 @@ const RANDOM_POOLS = {
   top: [1, 2, 3, 4, 5, 6, 7],
   bottom: [1, 2, 3, 4, 5, 6],
   footwear: [1, 2],
-  accessories: [null, 1, 2, 3, 4],
 };
 
-const RANDOM_SKIN_COLORS = ["#F1C6A5", "#D99A78", "#B97856", "#8D5A3B"];
-const RANDOM_HAIR_COLORS = ["#222222", "#5B321F", "#8B5A2B", "#D4A72C"];
+const RANDOM_COLORS = {
+  skinColor: [
+    "#F1C6A5",
+    "#D99A78",
+    "#B97856",
+    "#8D5A3B",
+  ],
+
+  hairColor: [
+    "#222222",
+    "#5B321F",
+    "#8B5A2B",
+    "#D4A72C",
+  ],
+
+  eyesColor: [
+    "#222222",
+    "#4A2F24",
+    "#3B6E8C",
+    "#4F7A3A",
+  ],
+
+  topColor: [
+    "#B0B0B0",
+    "#6B7280",
+    "#4F46E5",
+    "#D97706",
+    "#E879A5",
+    "#FFFFFF",
+  ],
+
+  bottomColor: [
+    "#B0B0B0",
+    "#4B5563",
+    "#2563EB",
+    "#7C3AED",
+    "#222222",
+  ],
+
+  footwearColor: [
+    "#222222",
+    "#6B7280",
+    "#2563EB",
+    "#DC2626",
+    "#FFFFFF",
+  ],
+
+  accessoryColor: [
+    "#222222",
+    "#7B3F22",
+    "#2563EB",
+    "#DC2626",
+    "#D4A72C",
+  ],
+
+  lipsColor: [
+    "#B05A78",
+    "#C96B7B",
+    "#A83250",
+    "#8B3A62",
+    "#D98282",
+    "#E6A0A0",
+  ],
+};
 
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
 
@@ -50,9 +111,16 @@ export default function AvatarDesign() {
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
+  const [showReplaceDialog, setShowReplaceDialog] = useState(false);
+  const [savedAvatars, setSavedAvatars] = useState([]);
+  const [selectedReplaceIndex, setSelectedReplaceIndex] = useState(null);
+
   const avatarConfig = useSessionStore((s) => s.avatarConfig);
   const setAvatarItem = useSessionStore((s) => s.setAvatarItem);
   const setAvatarColor = useSessionStore((s) => s.setAvatarColor);
+  const updateAccessorySlot = useSessionStore(
+    (s) => s.setAccessorySlot
+  );
   const setAvatarDrawing = useSessionStore(
     (s) => s.setAvatarDrawing
   );
@@ -66,6 +134,7 @@ export default function AvatarDesign() {
     const skipAvatars = useSessionStore((s) => s.skipAvatars);
 
   const [categoryIndex, setCategoryIndex] = useState(0);
+  const [accessorySlot, setAccessorySlot] = useState(0);
   const [showDrawingTools, setShowDrawingTools] = useState(false);
 
   const currentCategory = categories[categoryIndex];
@@ -94,13 +163,43 @@ export default function AvatarDesign() {
     }
   }
 
+  function handleAccessorySelect(slotIndex, itemId) {
+    updateAccessorySlot(slotIndex, { item: itemId });
+  }
+
   function handleRandomize() {
-    Object.entries(RANDOM_POOLS).forEach(([category, ids]) =>
-      setAvatarItem(category, pick(ids))
+    // Randomize all non-accessory avatar features.
+    Object.entries(RANDOM_POOLS).forEach(([category, ids]) => {
+      setAvatarItem(category, pick(ids));
+    });
+
+    // Randomize all non-accessory colours.
+    Object.entries(RANDOM_COLORS).forEach(([category, colors]) => {
+      if (category !== "accessoryColor") {
+        setAvatarColor(category, pick(colors));
+      }
+    });
+
+    // Randomize four accessory slots without duplicate items.
+    const accessoryIds = [1, 2, 3, 4];
+
+    const shuffled = [...accessoryIds].sort(
+      () => Math.random() - 0.5
     );
 
-    setAvatarColor("skinColor", pick(RANDOM_SKIN_COLORS));
-    setAvatarColor("hairColor", pick(RANDOM_HAIR_COLORS));
+    const occupiedCount = Math.floor(Math.random() * 5);
+    const occupiedSlots = new Set(
+      shuffled.slice(0, occupiedCount).map((_, index) => index)
+    );
+
+    const slots = Array.from({ length: 4 }, (_, index) => ({
+      item: occupiedSlots.has(index) ? shuffled[index] : null,
+      color: pick(RANDOM_COLORS.accessoryColor),
+    }));
+
+    slots.forEach((slot, index) => {
+      updateAccessorySlot(index, slot);
+    });
   }
 
   function handleReset() {
@@ -127,55 +226,61 @@ export default function AvatarDesign() {
     try {
       setIsSavingAvatar(true);
 
-      // Load the user's permanent avatar library.
       const result = await api.get("/users/avatars");
-      const savedAvatars = (result.avatars || []).slice(0, 5);
+      const currentSavedAvatars = (result.avatars || []).slice(0, 5);
 
-      let nextAvatars = [...savedAvatars];
+      if (currentSavedAvatars.length < 5) {
+        const nextAvatars = [
+          ...currentSavedAvatars,
+          { ...avatarConfig },
+        ];
 
-      if (nextAvatars.length < 5) {
-        // Add the new avatar to the first available slot.
-        nextAvatars.push({ ...avatarConfig });
-      } else {
-        // All five slots are occupied: ask which one to replace.
-        const choice = window.prompt(
-          "All 5 avatar slots are full.\n" +
-          "Enter a slot number from 1 to 5 to replace, or Cancel to keep them all."
-        );
+        await api.put("/users/avatars", {
+          avatars: nextAvatars,
+        });
 
-        if (choice === null) return;
-
-        const slotNumber = Number(choice);
-
-        if (
-          !Number.isInteger(slotNumber) ||
-          slotNumber < 1 ||
-          slotNumber > 5
-        ) {
-          window.alert("Please enter a number from 1 to 5.");
-          return;
-        }
-
-        const confirmed = window.confirm(
-          `Replace saved avatar ${slotNumber} with your current design?`
-        );
-
-        if (!confirmed) return;
-
-        nextAvatars[slotNumber - 1] = { ...avatarConfig };
+        setSaveMessage("Avatar saved to your account!");
+        return;
       }
 
-      // The backend replaces the array, so send the full updated library.
-      const response = await api.put("/users/avatars", {
+      // All five slots are full: open the visual selection dialog.
+      setSavedAvatars(currentSavedAvatars);
+      setSelectedReplaceIndex(null);
+      setShowReplaceDialog(true);
+
+    } catch (error) {
+      setSaveMessage(error.message || "Could not save avatar.");
+    } finally {
+      setIsSavingAvatar(false);
+    }
+  }
+
+  async function handleReplaceAvatar() {
+    if (selectedReplaceIndex === null) return;
+
+    try {
+      setIsSavingAvatar(true);
+
+      const nextAvatars = [...savedAvatars];
+
+      nextAvatars[selectedReplaceIndex] = {
+        ...avatarConfig,
+      };
+
+      await api.put("/users/avatars", {
         avatars: nextAvatars,
       });
 
-      setSaveMessage("Avatar saved to your account!");
+      setSavedAvatars(nextAvatars);
+      setShowReplaceDialog(false);
+      setSelectedReplaceIndex(null);
 
-      // Keep the message visible; the library will reload when you revisit selection.
-      console.log("Saved avatar library:", response.avatars);
+      setSaveMessage(
+        `Avatar ${selectedReplaceIndex + 1} replaced successfully!`
+      );
+
     } catch (error) {
-      setSaveMessage(error.message || "Could not save avatar.");
+      setSaveMessage(error.message || "Could not replace avatar.");
     } finally {
       setIsSavingAvatar(false);
     }
@@ -292,6 +397,78 @@ export default function AvatarDesign() {
             </p>
           )}
 
+          {showReplaceDialog && (
+            <div className="replace-avatar-overlay">
+              <div
+                className="replace-avatar-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="replace-avatar-title"
+              >
+                <h2 id="replace-avatar-title">
+                  ALL AVATAR SLOTS ARE FULL!
+                </h2>
+
+                <p>
+                  Select the avatar you want to replace with your new design.
+                </p>
+
+                <div className="replace-avatar-grid">
+                  {savedAvatars.map((avatar, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      className={`replace-avatar-slot ${
+                        selectedReplaceIndex === index ? "selected" : ""
+                      }`}
+                      onClick={() => setSelectedReplaceIndex(index)}
+                      aria-pressed={selectedReplaceIndex === index}
+                    >
+                      <span>AVATAR {index + 1}</span>
+
+                      <CharacterPreview
+                        avatarConfig={avatar}
+                        avatarView="full"
+                        skinColor={avatar.skinColor}
+                        hairColor={avatar.hairColor}
+                      />
+
+                      <span>
+                        {selectedReplaceIndex === index
+                          ? "✓ SELECTED"
+                          : "SELECT"}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <div className="replace-avatar-actions">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowReplaceDialog(false);
+                      setSelectedReplaceIndex(null);
+                    }}
+                    disabled={isSavingAvatar}
+                  >
+                    CANCEL
+                  </button>
+
+                  <button
+                    type="button"
+                    className="replace-confirm-button"
+                    onClick={handleReplaceAvatar}
+                    disabled={
+                      selectedReplaceIndex === null || isSavingAvatar
+                    }
+                  >
+                    {isSavingAvatar ? "SAVING..." : "REPLACE AVATAR"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
         </div>
 
 
@@ -351,12 +528,35 @@ export default function AvatarDesign() {
 
             {/* Actual item picker */}
 
+            {/* Accessory slot selector */}
+            {currentCategory.id === "accessories" && (
+              <div className="accessory-slot-selector">
+                {[0, 1, 2, 3].map((slot) => (
+                  <button
+                    key={slot}
+                    type="button"
+                    className={
+                      accessorySlot === slot
+                        ? "accessory-slot-button active"
+                        : "accessory-slot-button"
+                    }
+                    onClick={() => setAccessorySlot(slot)}
+                  >
+                    Accessory {slot + 1}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Actual item picker */}
             {currentCategory.id !== "skinTone" && (
               <ItemPicker
                 category={currentCategory.id}
                 selected={avatarConfig}
                 onSelect={handleItemSelect}
                 avatarView={avatarView}
+                accessorySlot={accessorySlot}
+                onAccessorySelect={handleAccessorySelect}
               />
             )}
 
@@ -420,6 +620,37 @@ export default function AvatarDesign() {
                   />
                 </div>
 
+              </div>
+            )}
+
+            {currentCategory.id === "lips" && (
+              <div className="sprite-colour-picker">
+                <span className="sprite-colour-label">
+                  Lip Colour
+                </span>
+
+                {RANDOM_COLORS.lipsColor.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className="colour-swatch"
+                    style={{ backgroundColor: color }}
+                    onClick={() => setAvatarColor("lipsColor", color)}
+                    aria-label={`Select lip colour ${color}`}
+                  />
+                ))}
+
+                <label className="custom-colour">
+                  Custom
+
+                  <input
+                    type="color"
+                    value={avatarConfig.lipsColor || "#B05A78"}
+                    onChange={(event) =>
+                      setAvatarColor("lipsColor", event.target.value)
+                    }
+                  />
+                </label>
               </div>
             )}
 
@@ -705,40 +936,21 @@ export default function AvatarDesign() {
             {currentCategory.id === "accessories" && (
               <div className="sprite-colour-picker">
                 <span className="sprite-colour-label">
-                  Accessory Colour
+                  Accessory {accessorySlot + 1} Colour
                 </span>
 
-                <button
-                  className="colour-swatch"
-                  style={{ backgroundColor: "#222222" }}
-                  onClick={() =>
-                    setAvatarColor("accessoryColor", "#222222")
-                  }
-                />
-
-                <button
-                  className="colour-swatch"
-                  style={{ backgroundColor: "#7B3F22" }}
-                  onClick={() =>
-                    setAvatarColor("accessoryColor", "#7B3F22")
-                  }
-                />
-
-                <button
-                  className="colour-swatch"
-                  style={{ backgroundColor: "#2563EB" }}
-                  onClick={() =>
-                    setAvatarColor("accessoryColor", "#2563EB")
-                  }
-                />
-
-                <button
-                  className="colour-swatch"
-                  style={{ backgroundColor: "#DC2626" }}
-                  onClick={() =>
-                    setAvatarColor("accessoryColor", "#DC2626")
-                  }
-                />
+                {RANDOM_COLORS.accessoryColor.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    className="colour-swatch"
+                    style={{ backgroundColor: color }}
+                    onClick={() =>
+                      updateAccessorySlot(accessorySlot, { color })
+                    }
+                    aria-label={`Select accessory colour ${color}`}
+                  />
+                ))}
 
                 <label className="custom-colour">
                   Custom
@@ -746,13 +958,13 @@ export default function AvatarDesign() {
                   <input
                     type="color"
                     value={
-                      avatarConfig.accessoryColor || "#222222"
+                      avatarConfig.accessories?.[accessorySlot]?.color ||
+                      "#222222"
                     }
                     onChange={(event) =>
-                      setAvatarColor(
-                        "accessoryColor",
-                        event.target.value
-                      )
+                      updateAccessorySlot(accessorySlot, {
+                        color: event.target.value,
+                      })
                     }
                   />
                 </label>

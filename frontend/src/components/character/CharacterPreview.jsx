@@ -144,15 +144,23 @@ export default function CharacterPreview({
         )}
 
         {/* Accessories: use the backend's plural field */}
-        {avatarConfig.accessories != null && catalog && (
-          <PixelSprite
-            src={getAssetUrl(
-              catalog.accessories,
-              avatarConfig.accessories
-            )}
-            color={accessoryColor}
-          />
-        )}
+        {/* Accessories: render all four accessory slots */}
+        {Array.isArray(avatarConfig.accessories) &&
+          catalog &&
+          avatarConfig.accessories.map((accessory, index) => {
+            if (!accessory?.item) return null;
+
+            return (
+              <PixelSprite
+                key={`accessory-${index}`}
+                src={getAssetUrl(
+                  catalog.accessories,
+                  accessory.item
+                )}
+                color={accessory.color || "#222222"}
+              />
+            );
+          })}
       </div>
     </div>
   );

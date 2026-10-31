@@ -4116,3 +4116,186 @@ button.design-row__thumb:hover {
   transform: translate(3px, 3px);
   box-shadow: 3px 3px 0 #777777;
 }
+
+/* Replace avatar selection dialog */
+
+.replace-avatar-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(10, 8, 35, 0.85);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.replace-avatar-dialog {
+  width: min(950px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+
+  background: #201d5c;
+  border: 6px solid #999999;
+  box-shadow: 8px 8px 0 #11102f;
+
+  padding: 28px;
+  text-align: center;
+}
+
+.replace-avatar-dialog h2 {
+  color: #ffe66d;
+  font-size: clamp(22px, 3vw, 34px);
+  margin-bottom: 12px;
+}
+
+.replace-avatar-dialog > p {
+  color: #fff4fc;
+  margin-bottom: 24px;
+}
+
+.replace-avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.replace-avatar-slot {
+  min-width: 0;
+  min-height: 220px;
+  padding: 10px 5px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+
+  background: #fff7e9;
+  color: #27205f;
+  border: 4px solid #d5c9ad;
+  box-shadow: 4px 4px 0 #5a477e;
+
+  cursor: pointer;
+  font: inherit;
+}
+
+.replace-avatar-slot > span {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.replace-avatar-slot > div {
+  width: 100%;
+  min-height: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.replace-avatar-slot canvas,
+.replace-avatar-slot svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.replace-avatar-slot.selected {
+  outline: 4px solid #ffe66d;
+  transform: translateY(-5px);
+  box-shadow: 5px 9px 0 #5a477e;
+}
+
+.replace-avatar-actions {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+}
+
+.replace-avatar-actions button {
+  padding: 12px 24px;
+  border: 3px solid #999;
+  background: #eee;
+  color: #201d5c;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.replace-avatar-actions .replace-confirm-button {
+  background: #ffe66d;
+}
+
+.replace-avatar-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 700px) {
+  .replace-avatar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ========================================
+   ACCESSORY SLOT BUTTONS
+======================================== */
+
+.accessory-slot-selector {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.accessory-slot-button {
+  min-width: 115px;
+  height: 48px;
+  padding: 0 12px;
+
+  border: 3px solid #222;
+  border-radius: 0;
+
+  background: #eeeeee;
+  color: #20204f;
+
+  font-family: "Pixelify Sans", "Courier New", monospace;
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+  box-shadow: 4px 4px 0 #222;
+
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease;
+}
+
+.accessory-slot-button:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #222;
+}
+
+.accessory-slot-button:active {
+  transform: translate(4px, 4px);
+  box-shadow: 0 0 0 #222;
+}
+
+.accessory-slot-button.active {
+  background: #222;
+  color: #fff;
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 #222;
+}
+
+/* Keep Empty inside the item carousel */
+.item-picker__track .item-card--empty {
+  flex: 0 0 140px;
+  height: 155px;
+}

@@ -26,7 +26,12 @@ const defaultAvatarConfig = {
 
   facialAccessories: null,
 
-  accessories: null,
+  accessories: [
+    { item: null, color: "#222222" },
+    { item: null, color: "#222222" },
+    { item: null, color: "#222222" },
+    { item: null, color: "#222222" },
+  ],
 
   // Custom sprite colours
   skinColor: "#B97856",
@@ -268,6 +273,28 @@ const useSessionStore = create(
             [category]: color,
           },
         })),
+
+      setAccessorySlot: (index, patch) =>
+        set((state) => {
+          if (index < 0 || index >= 4) return state;
+
+          const accessories = Array.from({ length: 4 }, (_, i) => ({
+            item: state.avatarConfig.accessories?.[i]?.item ?? null,
+            color: state.avatarConfig.accessories?.[i]?.color ?? "#222222",
+          }));
+
+          accessories[index] = {
+            ...accessories[index],
+            ...patch,
+          };
+
+          return {
+            avatarConfig: {
+              ...state.avatarConfig,
+              accessories,
+            },
+          };
+        }),  
 
 
       setAvatarDrawing: (drawing) =>
