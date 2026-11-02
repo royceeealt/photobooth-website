@@ -14,3 +14,12 @@ dist/
 # Local operating system files
 .DS_Store
 Thumbs.db
+# Local editor and OS files
+.DS_Store
+.vscode/
+
+# Local project archives
+*.zip
+
+# Logs
+*.log

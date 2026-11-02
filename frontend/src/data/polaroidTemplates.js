@@ -38,6 +38,7 @@ const polaroidTemplates = {
       },
       {
         id: "1-design-6",
+        customColor: true,
         name: "Design 6",
         image: "/assets/polaroid designs/1-photo/1 strip design-6.png",
       },
@@ -97,6 +98,7 @@ const polaroidTemplates = {
       },
       {
         id: "2-design-6",
+        customColor: true,
         name: "Design 6",
         image:
           "/assets/polaroid designs/2-photo/strip 2 design-6.png",
@@ -163,6 +165,7 @@ const polaroidTemplates = {
       },
       {
         id: "3-design-6",
+        customColor: true,
         name: "Design 6",
         image:
           "/assets/polaroid designs/3-photo/3 strip design-6.png",
@@ -235,6 +238,7 @@ const polaroidTemplates = {
       },
       {
         id: "4-design-6",
+        customColor: true,
         name: "Design 6",
         image:
           "/assets/polaroid designs/4-photo/4 strip design-6.png",

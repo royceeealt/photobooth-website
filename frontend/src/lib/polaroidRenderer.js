@@ -2,6 +2,7 @@
 // a PNG data URL. Layer order mirrors the on-screen preview:
 //   design/base -> photos -> overlap layer -> avatars -> props
 
+import { tintDesignImage } from "./designTint.js";
 import { buildOverlapLayer } from "./polaroidOverlay.js";
 import { renderAvatarCanvas, AVATAR_BASE_SIZE } from "./avatarRenderer.js";
 import { getProp, getPropBaseSize } from "../data/propCatalog.js";
@@ -35,6 +36,7 @@ export async function renderPolaroid({
   avatars = [],
   avatarPlacements = [],
   propPlacements = [],
+  frameColor = null,
 }) {
   const { width, height } = template.canvas;
 
@@ -46,9 +48,13 @@ export async function renderPolaroid({
   ctx.imageSmoothingEnabled = true;
   ctx.imageSmoothingQuality = "high";
 
-  // 1. Design (or blank base)
-  const designImg = await loadImage(design?.image || template.baseImage);
-  ctx.drawImage(designImg, 0, 0, width, height);
+    // 1. Design (or blank base). Design 6 gets its frame recoloured.
+  const useTint = Boolean(design?.customColor && frameColor);
+  const designSrc = useTint
+    ? await tintDesignImage(design.image, frameColor)
+    : design?.image || template.baseImage;
+  const designImg = await loadImage(designSrc);
+  ctx.drawImage(designImg, 0, 0, width, height);   // <-- must be here
 
   // 2. Photos
   for (let i = 0; i < template.photoSlots.length; i++) {
@@ -60,7 +66,7 @@ export async function renderPolaroid({
   }
 
   // 3. Decorations that overlap the photos
-  if (design) {
+  if (design && !useTint) {
     const overlayUrl = await buildOverlapLayer(
       design.image,
       template.photoSlots,

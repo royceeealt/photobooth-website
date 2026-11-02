@@ -6,6 +6,8 @@ import { propCatalog, getProp, getPropBaseSize } from "../data/propCatalog.js";
 import { buildOverlapLayer } from "../lib/polaroidOverlay.js";
 import { renderPolaroid } from "../lib/polaroidRenderer.js";
 import { avatarToDataUrl, AVATAR_BASE_SIZE } from "../lib/avatarRenderer.js";
+import { tintDesignImage } from "../lib/designTint.js";
+import FrameColourPicker, { DEFAULT_FRAME_COLOUR } from "../components/FrameColourPicker.jsx";
 
 const MIN_SCALE = 0.3;
 const MAX_SCALE = 2.5;
@@ -77,6 +79,8 @@ export default function PolaroidDesign() {
   // 0 = blank base template, 1.. = the numbered designs.
   const [designIndex, setDesignIndex] = useState(0);
   const [overlayUrl, setOverlayUrl] = useState(null);
+  const [frameColor, setFrameColor] = useState(DEFAULT_FRAME_COLOUR);
+  const [tintedUrl, setTintedUrl] = useState(null);
 
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState(null);
@@ -96,13 +100,28 @@ export default function PolaroidDesign() {
 
   const options = template ? [null, ...template.designs] : [null];
   const selectedDesign = options[designIndex] ?? null;
+  const isCustomDesign = Boolean(selectedDesign?.customColor);
+
+useEffect(() => {
+  if (!isCustomDesign) { setTintedUrl(null); return; }
+  let cancelled = false;
+  tintDesignImage(selectedDesign.image, frameColor)
+    .then((url) => { if (!cancelled) setTintedUrl(url); })
+    .catch((err) => console.error("Frame tint failed", err));
+  return () => { cancelled = true; };
+}, [isCustomDesign, selectedDesign, frameColor]);
+
+const designImageSrc =
+  isCustomDesign && tintedUrl
+    ? tintedUrl
+    : selectedDesign?.image || template?.baseImage;
 
   // Build the "decorations that overlap the photos" layer for the chosen design.
   useEffect(() => {
-    if (!template || !selectedDesign) {
-      setOverlayUrl(null);
-      return;
-    }
+    if (!template || !selectedDesign || selectedDesign.customColor) {
+  setOverlayUrl(null);
+  return;
+}
 
     let cancelled = false;
 
@@ -286,6 +305,7 @@ export default function PolaroidDesign() {
     clearAvatarPlacements();
     clearPropPlacements();
     setSelectedId(null);
+    setFrameColor(DEFAULT_FRAME_COLOUR);
   }
 
   async function handleDownload() {
@@ -302,6 +322,7 @@ export default function PolaroidDesign() {
         avatars,
         avatarPlacements,
         propPlacements,
+        frameColor: isCustomDesign ? frameColor : null,
       });
 
       const link = document.createElement("a");
@@ -321,8 +342,13 @@ export default function PolaroidDesign() {
 
   if (!template) {
     return (
-      <main className="photo-editor-page">
-        <section className="photo-editor-workspace">
+  <main className="photo-editor-page">
+    <section
+      className={
+        "photo-editor-workspace" +
+        (isCustomDesign ? " photo-editor-workspace--custom-colour" : "")
+      }
+    >
           <div className="photo-editor-preview">
             <div className="photo-editor-placeholder">
               <span>Choose a layout first</span>
@@ -390,7 +416,7 @@ export default function PolaroidDesign() {
             >
               {/* Polaroid design / base */}
               <img
-                src={selectedDesign?.image || template.baseImage}
+                src={designImageSrc}
                 alt={selectedDesign?.name || `Blank ${template.layout}-photo Polaroid`}
                 style={{
                   position: "absolute",
@@ -602,13 +628,19 @@ export default function PolaroidDesign() {
               Half View
             </button>
           </div>
-          <EditorControlRow
-            label={selectedDesign?.name || "Blank"}
-            onPrev={() => stepDesign(-1)}
-            onNext={() => stepDesign(1)}
-            disabled={options.length <= 1}
-            thumb={selectedDesign?.image || template.baseImage}
-          />
+          <div className="design-row">
+  <EditorControlRow
+    label={selectedDesign?.name || "Blank"}
+    onPrev={() => stepDesign(-1)}
+    onNext={() => stepDesign(1)}
+    disabled={options.length <= 1}
+    thumb={designImageSrc}
+  />
+
+  {isCustomDesign && (
+    <FrameColourPicker value={frameColor} onChange={setFrameColor} />
+  )}
+</div>
 
           <EditorControlRow
             label={

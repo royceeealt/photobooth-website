@@ -4299,3 +4299,32 @@ button.design-row__thumb:hover {
   flex: 0 0 140px;
   height: 155px;
 }
+
+.photo-editor-workspace--custom-colour { grid-template-columns: 1fr 500px; }
+
+.design-row { display: flex; align-items: center; justify-content: center; gap: 28px; }
+
+.frame-colour-picker { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+.frame-colour-picker__label {
+  font-family: "Pixelify Sans", "Courier New", monospace;
+  font-size: 14px; font-weight: 700; color: white; text-transform: lowercase;
+}
+
+.frame-colour-picker__swatches { display: grid; grid-template-columns: repeat(3, 42px); gap: 12px; }
+
+.frame-colour-picker .custom-colour { margin-left: 0; color: white; }
+
+.colour-swatch--selected { outline: 3px solid white; outline-offset: 2px; }
+
+@media (max-width: 750px) {
+  .photo-editor-workspace--custom-colour { grid-template-columns: 1fr; }
+  .design-row { flex-wrap: wrap; }
+}
+.design-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
