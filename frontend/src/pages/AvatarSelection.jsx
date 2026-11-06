@@ -77,9 +77,19 @@ export default function AvatarSelection() {
   function handleContinue() {
     const ready = sessionAvatarReady || [];
     const completedCount = ready.filter(Boolean).length;
+    const selectedSaved = selectedIndexes
+      .map((index) => savedAvatars[index])
+      .filter(Boolean);
 
     // All requested avatars are already complete.
     if (completedCount >= targetCount) {
+      navigate("/photo-choice");
+      return;
+    }
+
+    // The user filled every requested slot with saved avatars.
+    if (targetCount > 0 && selectedSaved.length >= targetCount) {
+      beginAvatarSession(selectedSaved, targetCount);
       navigate("/photo-choice");
       return;
     }
@@ -94,10 +104,6 @@ export default function AvatarSelection() {
     }
 
     // No avatars have been created yet: start from the saved avatars selected.
-    const selectedSaved = selectedIndexes
-      .map((index) => savedAvatars[index])
-      .filter(Boolean);
-
     beginAvatarSession(selectedSaved, targetCount);
     navigate(
       selectedSaved.length < targetCount
@@ -109,6 +115,8 @@ export default function AvatarSelection() {
 
   const ready = sessionAvatarReady || [];
   const completedCount = ready.filter(Boolean).length;
+  const hasSelectedMaximum =
+    targetCount > 0 && selectedIndexes.length >= targetCount;
 
   return (
     <main className="page">
@@ -203,8 +211,8 @@ export default function AvatarSelection() {
             disabled={loading || !!error}
             onClick={handleContinue}
           >
-            {completedCount >= targetCount
-              ? "CONTINUE"
+            {completedCount >= targetCount || hasSelectedMaximum
+              ? "GO TO THE PHOTOBOOTH"
               : "CREATE REMAINING AVATARS"}
           </button>
         </div>

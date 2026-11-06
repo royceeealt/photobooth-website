@@ -11,6 +11,7 @@ import AvatarDesign from "./pages/AvatarDesign.jsx";
 import PhotoChoice from "./pages/PhotoChoice.jsx";
 import ImageCapture from "./pages/ImageCapture.jsx";
 import PolaroidDesign from "./pages/PolaroidDesign.jsx";
+import Profile from "./pages/Profile.jsx";
 
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -28,6 +29,7 @@ export default function App() {
 
           {/* Only these routes display the logout button */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
             <Route path="/strip-count" element={<StripCount />} />
             <Route path="/avatar-selection" element={<AvatarSelection />} />
             <Route path="/avatar-design" element={<AvatarDesign />} />

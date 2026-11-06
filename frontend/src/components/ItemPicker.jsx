@@ -39,10 +39,11 @@ export default function ItemPicker({
     ? accessoryItems[accessorySlot]?.item ?? null
     : selected[category];
 
-  const visibleItems = items.slice(startIndex, startIndex + 3);
+  const pickerItems = isAccessories ? [null, ...items] : items;
+  const visibleItems = pickerItems.slice(startIndex, startIndex + 3);
 
   const canGoBack = startIndex > 0;
-  const canGoForward = startIndex + 3 < items.length;
+  const canGoForward = startIndex + 3 < pickerItems.length;
 
   function handleSelect(itemId) {
     if (isAccessories) {
@@ -58,21 +59,6 @@ export default function ItemPicker({
 
   return (
     <div className="item-picker">
-      {isAccessories && (
-        <button
-          type="button"
-          className={
-            selectedItem === null
-              ? "item-card selected"
-              : "item-card"
-          }
-          onClick={() => handleSelect(null)}
-        >
-          <span>✕</span>
-          <span>Empty</span>
-        </button>
-      )}
-
       {items.length === 0 ? (
         <p className="item-picker__empty">
           No items available yet.
@@ -93,35 +79,37 @@ export default function ItemPicker({
           </button>
 
           <div className="item-picker__track">
-            {isAccessories && (
-              <button
-                type="button"
-                className={
-                  selectedItem === null
-                    ? "item-card item-card--empty selected"
-                    : "item-card item-card--empty"
-                }
-                onClick={() => handleSelect(null)}
-              >
-                <span>✕</span>
-                <span>Empty</span>
-              </button>
-            )}
-            {visibleItems.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className={
-                  selectedItem === item.id
+            {visibleItems.map((item) => {
+              if (isAccessories && item === null) {
+                return (
+                  <button
+                    key="empty"
+                    type="button"
+                    className={selectedItem === null
+                      ? "item-card item-card--empty selected"
+                      : "item-card item-card--empty"}
+                    onClick={() => handleSelect(null)}
+                  >
+                    <span>✕</span>
+                    <span>Empty</span>
+                  </button>
+                );
+              }
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  className={selectedItem === item.id
                     ? "item-card selected"
-                    : "item-card"
-                }
-                onClick={() => handleSelect(item.id)}
-              >
-                <img src={item.assetUrl} alt={item.name} />
-                <span>{item.name}</span>
-              </button>
-            ))}
+                    : "item-card"}
+                  onClick={() => handleSelect(item.id)}
+                >
+                  <img src={item.assetUrl} alt={item.name} />
+                  <span>{item.name}</span>
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -130,7 +118,7 @@ export default function ItemPicker({
             disabled={!canGoForward}
             onClick={() =>
               setStartIndex((current) =>
-                Math.min(items.length - 3, current + 1)
+                Math.min(pickerItems.length - 3, current + 1)
               )
             }
           >

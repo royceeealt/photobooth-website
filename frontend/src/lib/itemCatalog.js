@@ -42,5 +42,24 @@ export async function loadItemCatalog() {
     catalog[category].sort((a, b) => a.id - b.id);
   }
 
+  // Keep locally bundled accessories selectable even when the database has
+  // not been seeded with the latest assets yet. API records take precedence.
+  const manifestResponse = await fetch("/assets/items/itemManifest.json");
+  if (manifestResponse.ok) {
+    const manifest = await manifestResponse.json();
+    const accessoryItems = (manifest.accessory || []).map((item) => ({
+      id: Number(item.id.match(/\d+$/)?.[0]),
+      name: item.name,
+      assetUrl: item.assetPath,
+      halfAssetUrl: null,
+    })).filter((item) => Number.isFinite(item.id));
+
+    const byId = new Map(accessoryItems.map((item) => [item.id, item]));
+    for (const item of catalog.accessories || []) {
+      byId.set(item.id, item);
+    }
+    catalog.accessories = [...byId.values()].sort((a, b) => a.id - b.id);
+  }
+
   return catalog;
 }
